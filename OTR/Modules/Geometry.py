@@ -8,7 +8,10 @@ import OpticalSystem
 
 def GetGeometry():
 
-    calib = Foil.CalibrationFoil(normal=cf.foil['normal'], diam=cf.foil['D'],
+    #calib = Foil.CalibrationFoil(normal=cf.foil['normal'], diam=cf.foil['D'],
+                                 #name=cf.foil['name'])
+    
+    metal = Foil.MetalFoil(normal=cf.foil['normal'], diam=cf.foil['D'],
                                  name=cf.foil['name'])
 
     M0 = Mirror.PlaneMirror(
@@ -28,7 +31,7 @@ def GetGeometry():
 
     image = ImagePlane.ImagePlane(R=cf.camera['R'], name=cf.camera['name'])
 
-    calib.Place(X=cf.foil['X'], angles=cf.foil['angles'])
+    metal.Place(X=cf.foil['X'], angles=cf.foil['angles'])
     M0.Place(X=cf.M0['X'], angles=cf.M0['angles'], yrot=cf.M0['yrot'])
     M1.Place(X=cf.M1['X'], angles=cf.M1['angles'])
     M2.Place(X=cf.M2['X'], angles=cf.M2['angles'])
@@ -37,12 +40,12 @@ def GetGeometry():
     image.Place(X=cf.camera['X'], angles=cf.camera['angles'])
 
     system = OpticalSystem.OpticalSystem()
-    # system.AddComponent(calib)
-    system.AddComponent(M0)
-    system.AddComponent(M1)
-    # system.AddComponent(M2)
-    # system.AddComponent(M3)
-    # system.AddComponent(M4)
-    system.AddComponent(image)
+    system.AddComponent(metal)
+    #system.AddComponent(M0)
+    #system.AddComponent(M1)
+    #system.AddComponent(M2)
+    #system.AddComponent(M3)
+    #system.AddComponent(M4)
+    #system.AddComponent(image)
 
     return system

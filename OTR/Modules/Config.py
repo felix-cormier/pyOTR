@@ -38,7 +38,7 @@ light = {
 light_source = 0
 
 foils = {
-    0: 'Blank',
+    0: 'Blank',#does this do anything?
     1: 'Fluorescent',
     2: 'Calibration',
     3: 'Ti1',
@@ -50,10 +50,10 @@ foils = {
 
 foil = {
     'X': np.zeros((1, 3)),
-    'angles': np.array([0., Conv(90), 0.]),
-    'normal': np.array([[0, -1, 0]]),
+    'angles': np.array([0., Conv(90), Conv(45)]),# original had 0 for third rotation
+    'normal': np.array([[0, 1, 0]]),
     'D': 50.,  # diameter - 55.0, original C++ code, not sure why
-    'name': foils[2]
+    'name': foils[0]
 }
 
 M0 = {
@@ -109,8 +109,8 @@ camera = {
     'npxlX': 484,
     'npxlY': 704,
     'focal distance': 60.,
-    'X': np.array([[1100., -10., 0.]]),
-    'angles': np.array([0., Conv(90), 0.]),
+    'X': np.array([[10., 0., 0.]]),#originally set to y = -10
+    'angles': np.array([0., 0., 0.]), #originally set y to Conv(90)
     'R': 100.,
     'name': 'ImagePlane'
 }

@@ -2,6 +2,7 @@ import concurrent.futures
 import numpy as np
 import sys
 sys.path.append('Modules/')
+sys.path.append('../Beam/Modules/')
 import Config as cf
 import Beam
 import Geometry
@@ -31,6 +32,9 @@ def SimulateOTR(X, V, system):
 
 if __name__ == '__main__':
 
+    #Testing out saving arrays
+    foilfile='data/foil_image.npy'
+
     cf.GetTime()
 
     # Get details about the beam:
@@ -47,6 +51,8 @@ if __name__ == '__main__':
 
     # Run simulation:
     X, V = SimulateOTR(X, V, system)
+    print(X[:10])
+    print(V[:10])
 
     if cf.save:
         np.save(f'{cf.name}_Xfinal', X)
