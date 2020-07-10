@@ -134,7 +134,7 @@ class MetalFoil(Foil):
         V = self.transform_coord.TransfrmVec(V)
         # Get X interaction points and V reflected:
         Xint, Vr = self.PlaneTransport(X, V) #but PlaneTransport still removes
-        Vr = self.light.GetOTRRays(Vr) #should be before, but does this make changes?
+        Vr = self.light.GetOTRRays2(Vr) #should be before, but does this make changes?
         # Transform back to the global coords:
         # Why not just remove rays that don't pass foil here?
         Xint = self.transform_coord.TransfrmPoint(Xint, inv=True)

@@ -42,10 +42,10 @@ def GetGeometry():
     system = OpticalSystem.OpticalSystem()
     system.AddComponent(metal)
     #system.AddComponent(M0)
-    #system.AddComponent(M1)
-    #system.AddComponent(M2)
-    #system.AddComponent(M3)
-    #system.AddComponent(M4)
-    #system.AddComponent(image)
+    system.AddComponent(M1)
+    system.AddComponent(M2)
+    system.AddComponent(M3)
+    system.AddComponent(M4)
+    system.AddComponent(image)
 
     return system

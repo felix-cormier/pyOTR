@@ -1,6 +1,7 @@
 import numpy as np
 from numpy import cos, arccos, arctan2, sin, pi, log, sqrt
-import random 
+from numpy.random import seed
+from numpy.random import rand
 from random import random
 from pynverse import inversefunc
 
@@ -14,6 +15,20 @@ def RotateZ(V, angle):
                   ])
     return V.dot(M.T) #once you figure out if this is alright, ask Gabriel
 
+def RotateZ2(V, angle):
+    #can use this to efficiently make a bunch of matrices from a list of angles
+    #matrices and vectors are broadcast together for speedy implementation
+    c = np.cos(angle)
+    s = np.sin(angle)
+    z = np.zeros(angle.size)
+    u=np.zeros(angle.size)#u for unit ** np.ones
+    u.fill(1)
+    M = np.array([c,-s,z,s,c,z,z,z,u])#create new row every third element, get z-rot matrix
+    M=M.T
+    M=M.reshape(angle.size,3,3)
+    V = np.einsum('...ikj,...ij->...ik',M,V)#should ensure you understand exactly why
+    return V
+
 
 def RotateX(V, angle):
     M = np.array([[1, 0, 0.],
@@ -24,14 +39,38 @@ def RotateX(V, angle):
     #V[i] = V[i,:] -- confusing
     return V.dot(M.T)#same as M.dot(V), but having touble with that
 
+def RotateX2(V,angle):
+    #can use this to efficiently make a bunch of matrices from a list of angles
+    #matrices and vectors are broadcast together for speedy implementation
+    c = np.cos(angle)
+    s = np.sin(angle)
+    z = np.zeros(angle.size)
+    u=np.zeros(angle.size)#u for unit ** np.ones
+    u.fill(1)
+    M = np.array([u,z,z,z,c,-s,z,s,c])#create new row every third element, get x-rot matrix
+    M=M.T
+    M=M.reshape(angle.size,3,3)
+    V = np.einsum('...ikj,...ij->...ik',M,V)#should ensure you understand exactly why
+    return V
+
 def SetRaysToZVelocity(V,theta,phi):
     V=RotateZ(V,phi)
     V=RotateX(V,theta)
     return V
 
+def SetRaysToZVelocity2(V, theta, phi):
+    V=RotateZ2(V,phi)
+    V=RotateX2(V, theta)
+    return V
+
 def InvertSetRaysToZVelocity(V,theta,phi):
     V=RotateX(V,-theta)
     V=RotateZ(V,-phi)
+    return V
+
+def InvertSetRaysToZVelocity2(V, theta, phi):
+    V=RotateX2(V, -theta)
+    V=RotateZ2(V, -phi)
     return V
 
 
@@ -56,11 +95,11 @@ class LightDist():
         otr = (lambda x: 0.5*(log(x+1)*(x+1)-x)/(x+1))
         return otr(y)
 
-    def OTRcdf_inv(self, cdf_val):
+    def OTRcdf_inv(self, cdf_vals):
         gmma = self.beam_gamma #light beam gamma
         otr = (lambda x: 0.5*(log(x+1)*(x+1)-x)/(x+1))
         otr_inv = inversefunc(otr)
-        theta = sqrt(otr_inv(cdf_val))/gmma #solve for otr angle
+        theta = sqrt(otr_inv(cdf_vals))/gmma #solve for otr angle
         return theta
 
     def GetOTRRays(self, V):
@@ -74,6 +113,27 @@ class LightDist():
             V[x]=RotateX(V[x],-oangle)
             V[x]=RotateZ(V[x],rand)
         V=InvertSetRaysToZVelocity(V,theta,phi)
+        return V
+    
+    def GetOTRRays2(self, V):
+        seed(1)
+        theta=arccos(V[:,2])
+        phi=arctan2(V[:,0],V[:,1])
+        V=SetRaysToZVelocity2(V,theta,phi)
+        #rand_angs = self.f_thtMax*rand(theta.size)
+        #oangle = self.OTRcdf_inv(rand_angs)
+        #rand_angs = Conv(360)*rand(theta.size)
+        oangle = np.zeros(theta.size)
+        rand = np.zeros(theta.size)
+        
+        for i in range(0,V.shape[0]):
+            otr_rand = self.f_thtMax*random() #random angle 0-max 
+            oangle[i] = self.OTRcdf_inv(otr_rand) #slow step
+            rand[i] = Conv(360)*random() #random angle 0-360
+        
+        V = RotateX2(V,-oangle)
+        V = RotateZ2(V,rand)
+        V = InvertSetRaysToZVelocity2(V,theta,phi)
         return V
 
 #   def OtrCDF(self, x=[], pars=[]):

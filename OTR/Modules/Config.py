@@ -57,7 +57,7 @@ foil = {
 }
 
 M0 = {
-    'normal': np.array([[0., 0., -1.]]),
+    'normal': np.array([[0., 0., 1.]]),
     'R': 100.,
     'X': np.zeros((1, 3)),
     'angles': np.array([0., Conv(45), 0.]),
@@ -109,8 +109,8 @@ camera = {
     'npxlX': 484,
     'npxlY': 704,
     'focal distance': 60.,
-    'X': np.array([[10., 0., 0.]]),#originally set to y = -10
-    'angles': np.array([0., 0., 0.]), #originally set y to Conv(90)
+    'X': np.array([[-500., 6522., 0.]]),#originally set to y = -10
+    'angles': np.array([Conv(90), 0., 0.]), #originally set y to Conv(90)
     'R': 100.,
     'name': 'ImagePlane'
 }
