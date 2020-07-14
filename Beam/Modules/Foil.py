@@ -1,4 +1,5 @@
 import numpy as np
+import LightDist
 from OpticalComponent import OpticalComponent
 
 
@@ -97,4 +98,28 @@ class CalibrationFoil(Foil):
         # Transform back to the global coords:
         Xint = self.transform_coord.TransfrmPoint(Xint, inv=True)
         Vr = self.transform_coord.TransfrmVec(Vr, inv=True)
+        return Xint, Vr
+
+# Metal Foil class, inherits from Generic Foil class:
+# class MetalFoil(OpticalComponent, Foil):
+class MetalFoil(Foil):
+    def __init__(self, normal=np.array([[0., 1., 0.]]), diam=50.,
+                 hole_dist=7., hole_diam=1.2, name=None):
+        Foil.__init__(self, normal=normal, diam=diam) #child init overrides parent init
+        self.reflect=1 #should set in config
+        self.dffs=0 #do we need this? should set in config
+        self.light = LightDist.LightDist() 
+
+    def RaysTransport(self, X, V):
+        # Go to local coords:
+        X = self.transform_coord.TransfrmPoint(X)
+        V = self.transform_coord.TransfrmVec(V)
+        # Get X interaction points and V reflected:
+        Xint, Vr = self.PlaneTransport(X, V) #but PlaneTransport still removes
+        Vr = self.light.GetOTRRays2(Vr) #should be before, but does this make changes?
+        # Transform back to the global coords:
+        # Why not just remove rays that don't pass foil here?
+        Xint = self.transform_coord.TransfrmPoint(Xint, inv=True)
+        Vr = self.transform_coord.TransfrmVec(Vr, inv=True)
+
         return Xint, Vr
