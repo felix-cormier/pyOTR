@@ -11,8 +11,8 @@ def Conv(deg):
 VERBOSE = 1  # Set to 1 for debugging info
 
 save = True
-inputs = 'data/pencil_{}initial.npy'
-name = 'output/pencil'  # name prefix used to create all outputs
+inputs = 'data/otr_{}.npy'
+name = 'output/full'  # name prefix used to create all outputs
 logfile = name + '.log'  # log output will be directed to this file and to screen
 
 chunck = 1_000
@@ -43,7 +43,7 @@ foil = {
     'angles': np.array([0., Conv(90), 0.]),
     'normal': np.array([[0, -1, 0]]),
     'D': 50.,  # diameter - 55.0, original C++ code, not sure why
-    'name': foils[2]
+    'name': foils[3]
 }
 
 M0 = {
@@ -99,10 +99,29 @@ camera = {
     'npxlX': 484,
     'npxlY': 704,
     'focal distance': 60.,
-    'X': np.array([[1100., -10., 0.]]),
-    'angles': np.array([0., Conv(90), 0.]),
-    'R': 100.,
-    'name': 'ImagePlane'
+    'R': 1000.,
+    'name': 'ImagePlane',
+    
+
+    #camera at M2 position
+    #'X': np.array([[1100., 3850., 0.]]),
+    #'angles': np.array([0., Conv(90), 0.])
+
+    #camera at M3 position
+    #'X': np.array([[-1100., 3850., 0.]]),
+    #'angles': np.array([Conv(90), Conv(90), 0.])
+
+    #camera at M4 position
+    #'X': np.array([[-1100., 6522., 0.]]),
+    #'angles': np.array([0., Conv(90), 0.])
+
+    #camera at M4 focal point
+    'X': np.array([[-1100. + 2*M4['f'], 6522., 0.]]),
+    'angles': np.array([Conv(90), Conv(90), 0.])
+    
+
+
+
 }
 
 level = logging.DEBUG if VERBOSE else logging.INFO

@@ -1,7 +1,8 @@
 import numpy as np
-from numpy import cos, arccos, arctan2, sin, pi, log, sqrt
+from numpy import cos, arccos, arctan2, sin, pi, log, sqrt, exp
 from numpy.random import seed
 from numpy.random import rand
+from scipy.stats import moyal
 from random import random
 from pynverse import inversefunc
 
@@ -45,8 +46,7 @@ def RotateX2(V,angle):
     c = np.cos(angle)
     s = np.sin(angle)
     z = np.zeros(angle.size)
-    u=np.zeros(angle.size)#u for unit ** np.ones
-    u.fill(1)
+    u=np.ones(angle.size)#u for unit ** np.ones
     M = np.array([u,z,z,z,c,-s,z,s,c])#create new row every third element, get x-rot matrix
     M=M.T
     M=M.reshape(angle.size,3,3)
@@ -86,8 +86,6 @@ class LightDist():
         self.beam_gamma = 32.
         self.theta_range = 0.3  # rad
         self.f_thtMax = self.OTRcdf(self.theta_range) # cdf is monotonically increasing
-        print("Theta max!")
-        print(self.f_thtMax)
 
     def OTRcdf(self, theta):
         gmma = self.beam_gamma #light beam gamma
@@ -102,6 +100,20 @@ class LightDist():
         theta = sqrt(otr_inv(cdf_vals))/gmma #solve for otr angle
         return theta
 
+    def otr_func(self, x):
+        gmma = self.beam_gamma
+        y = (x*gmma)**2
+        return 0.5*(log(y+1)*(y+1)-y)/(y+1)
+    
+    def otr_cdf(self, x):
+        return self.otr_func(x)/self.otr_func(self.theta_range)
+    
+    def otr_pdf(self, x):
+        norm = self.otr_func(self.theta_range)
+        gmma = self.beam_gamma
+        y = (x**3/((gmma**-2+x**2)**2))/norm
+        return y
+    
     def GetOTRRays(self, V):
         theta=arccos(V[0][2])
         phi=arctan2(V[0][0],V[0][1])
@@ -146,6 +158,53 @@ class LightDist():
         rand_angs = Conv(360)*rand(theta.size)
         V = RotateX2(V,-oangle)
         V = RotateZ2(V,rand_angs)
+        V = InvertSetRaysToZVelocity2(V,theta,phi)
+        return V
+    
+    def GetOTRRays4(self,V):
+        #Initialize
+        n = V.shape[0]
+        val = sqrt(3)/self.beam_gamma
+        xmin, xmax = 0, self.theta_range
+        fmin,fmax = 0, self.otr_pdf(val)
+        oangles = np.zeros(n)
+        rangles = Conv(360)*rand(n)
+
+        #Loop for OTR angles
+        i = 0
+        while i < n:
+            x = xmin + random()*(xmax-xmin)
+            u = fmin + random()*(fmax-fmin)
+            if u < self.otr_pdf(x):
+                oangles[i] = x
+                i = i+1
+       
+        np.save('mc_otr',oangles)
+        #Set V to z-axis
+        theta=arccos(V[:,2])
+        phi=arctan2(V[:,0],V[:,1])
+        V=SetRaysToZVelocity2(V,theta,phi)
+        
+        #Create OTR photons
+        V = RotateX2(V,-oangles)
+        V = RotateZ2(V,rangles)
+        V = InvertSetRaysToZVelocity2(V,theta,phi)
+        return V
+    
+    def MoyalScatter(self, V):
+        #Point ray to z axis
+        theta=arccos(V[:,2])
+        phi=arctan2(V[:,0],V[:,1])
+        #Scatter according to landau approximation
+        mean = 5.794
+        sigma = 3.766
+        V=SetRaysToZVelocity2(V,theta,phi)
+        sangles = moyal.rvs(size=V.shape[0])*sigma+mean#in degrees
+        sangles=Conv(sangles) #now radians
+        rand_angs = Conv(360)*rand(theta.size)
+        V = RotateX2(V,-sangles)
+        V = RotateZ2(V,rand_angs)
+        #Reorient ray
         V = InvertSetRaysToZVelocity2(V,theta,phi)
         return V
 

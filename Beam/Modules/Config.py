@@ -10,17 +10,18 @@ def Conv(deg):
 VERBOSE = 1  # Set to 1 for debugging info
 
 save = True
-name = 'output/otr'  # name prefix used to create all outputs
+#name = 'output/scat'
+name = '../OTR/data/otr'  # name prefix used to create all outputs
 logfile = name + '.log'  # log output will be directed to this file and to screen
 
-nrays = 10_000_000
-chunck = 1_000  # 0 if no division is to be made
+nrays = 1_000_000
+chunck = 1000  # 0 if no division is to be made
 
 beam = {
     'x': 0.,
     'y': 0.,
     'z': -100.,
-    'cov': np.diag([3., 3., 0.]),
+    'cov': np.diag([9., 9., 0.]),
     'Vtype': 'parallel',  # need to implement divergent beam also
     'vcov': np.diag([0.05, 0.05, 1.])  # not yet used, vz needs to be constrained by vx/vy
 }
@@ -38,18 +39,22 @@ foils = {
 
 foil = {
     'X': np.zeros((1, 3)),
-    'angles': np.array([0., Conv(90), 0.]),
+    'angles': np.array([0., Conv(90), Conv(45)]),
     'normal': np.array([[0, -1, 0]]),
     'D': 50.,
-    'name': foils[2]
+    'name': foils[3]
 }
 
 camera = {
     'npxlX': 484,
     'npxlY': 704,
     'focal distance': 60.,
-    'X': np.array([[1100., -10., 0.]]),
-    'angles': np.array([0., Conv(90), 0.]),
+    #At foil
+    #'X': np.array([[0., 0., 0.]]),
+    #'angles': np.array([0.,0.,0.]),
+    #At M1
+    'X': np.array([[1100., 0., 0.]]),
+    'angles': np.array([Conv(90), Conv(90), Conv(90)]),
     'R': 10_000.,
     'name': 'ImagePlane'
 }

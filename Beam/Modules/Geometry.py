@@ -6,7 +6,7 @@ import OpticalSystem
 
 def GetGeometry():
 
-    foil = Foil.CalibrationFoil(normal=cf.foil['normal'], diam=cf.foil['D'],
+    foil = Foil.MetalFoil(normal=cf.foil['normal'], diam=cf.foil['D'],
                                  name=cf.foil['name'])
     image = ImagePlane.ImagePlane(R=cf.camera['R'], name=cf.camera['name'])
 
@@ -16,5 +16,5 @@ def GetGeometry():
 
     system = OpticalSystem.OpticalSystem()
     system.AddComponent(foil)
-    #system.AddComponent(image)
+   # system.AddComponent(image)
     return system
