@@ -31,4 +31,5 @@ class Beam():
         mean = [self.x, self.y, self.z]
         X = np.random.multivariate_normal(mean, self.cov, self.nrays)
         V = self.GenerateRaysV(X.shape)
-        return X, V
+        O = np.zeros(self.nrays)
+        return X, V, O

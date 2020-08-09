@@ -13,7 +13,7 @@ class Foil(OpticalComponent):
     def GetDiameter(self):
         return self.diam
 
-    def PlaneIntersect(self, X, V):
+    def PlaneIntersect(self, X, V, O):
         y = X[:, 1]     # selects the y component of all rays
         Vy = V[:, 1]    # selects the vy component of all rays
         eps = 10e-5  # tolerance
@@ -25,12 +25,15 @@ class Foil(OpticalComponent):
         Vy = Vy[GoodRays]
         X = X[GoodRays]
         V = V[GoodRays]
+        O.resize(O.shape[0], 1)
+        O = O[GoodRays]
         # Only keep rays that are pointing at the foil:
         ToPlane = Vy / np.abs(Vy) != (y - Y) / np.abs(y - Y)
         y = y[ToPlane]
         Vy = Vy[ToPlane]
         X = X[ToPlane]
         V = V[ToPlane]
+        O = O[ToPlane]
         # interaction at y = 0, by construction:
         t = (Y - y) / Vy
         assert (t > 0).all()
@@ -41,15 +44,16 @@ class Foil(OpticalComponent):
         passed = np.diag(Xint.dot(Xint.T)) < (self.diam**2) / 4.
         Xint = Xint[passed]
         V = V[passed]
+        O = O[passed]
         assert Xint.shape == V.shape
-        return Xint, V
+        return Xint, V, O
 
     def PlaneReflect(self, V):
         return V - 2 * V.dot(self.normal.T) * self.normal
 
-    def PlaneTransport(self, X, V):
-        X, V = self.PlaneIntersect(X, V)
-        return X, self.PlaneReflect(V)
+    def PlaneTransport(self, X, V, O):
+        X, V, O = self.PlaneIntersect(X, V, O)
+        return X, self.PlaneReflect(V), O
 
 
 # Calibration Foil class, inherits from Generic Foil class:
@@ -86,7 +90,7 @@ class CalibrationFoil(Foil):
             passed = np.logical_or(passed, mask)
         return passed
 
-    def RaysTransport(self, X, V):
+    def RaysTransport(self, X, V, O):
         # Go to local coords:
         X = self.transform_coord.TransfrmPoint(X)
         V = self.transform_coord.TransfrmVec(V)
@@ -98,7 +102,7 @@ class CalibrationFoil(Foil):
         # Transform back to the global coords:
         Xint = self.transform_coord.TransfrmPoint(Xint, inv=True)
         Vr = self.transform_coord.TransfrmVec(Vr, inv=True)
-        return Xint, Vr
+        return Xint, Vr, O
 
 # Metal Foil class, inherits from Generic Foil class:
 # class MetalFoil(OpticalComponent, Foil):
@@ -110,17 +114,17 @@ class MetalFoil(Foil):
         self.dffs=0 #do we need this? should set in config
         self.light = LightDist.LightDist() 
 
-    def RaysTransport(self, X, V):
+    def RaysTransport(self, X, V, O):
         # Go to local coords:
         X = self.transform_coord.TransfrmPoint(X)
         V = self.transform_coord.TransfrmVec(V)
         # Get X interaction points and V reflected:
-        Xint, Vr = self.PlaneTransport(X, V) #but PlaneTransport still removes
-        Vr = self.light.MoyalScatter(Vr)
-        Vr = self.light.GetOTRRays4(Vr) #should be before, but does this make changes?
+        Xint, Vr, O = self.PlaneTransport(X, V, O) #but PlaneTransport still removes
+        #Vr = self.light.MoyalScatter(Vr)
+        Vr, O = self.light.GetOTRRays4(Vr, O) #should be before, but does this make changes?
         # Transform back to the global coords:
         # Why not just remove rays that don't pass foil here?
         Xint = self.transform_coord.TransfrmPoint(Xint, inv=True)
         Vr = self.transform_coord.TransfrmVec(Vr, inv=True)
 
-        return Xint, Vr
+        return Xint, Vr, O

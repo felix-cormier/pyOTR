@@ -84,7 +84,7 @@ def Landau(mu, sigma):
 class LightDist():
     def __init__(self, seed=0):
         self.beam_gamma = 32.
-        self.theta_range = 0.3  # rad
+        self.theta_range = 0.03  # rad
         self.f_thtMax = self.OTRcdf(self.theta_range) # cdf is monotonically increasing
 
     def OTRcdf(self, theta):
@@ -111,7 +111,7 @@ class LightDist():
     def otr_pdf(self, x):
         norm = self.otr_func(self.theta_range)
         gmma = self.beam_gamma
-        y = (x**3/((gmma**-2+x**2)**2))/norm
+        y = ((x*x*sin(x))/((gmma**-2+x**2)**2))/norm
         return y
     
     def GetOTRRays(self, V):
@@ -161,7 +161,7 @@ class LightDist():
         V = InvertSetRaysToZVelocity2(V,theta,phi)
         return V
     
-    def GetOTRRays4(self,V):
+    def GetOTRRays4(self,V, O):
         #Initialize
         n = V.shape[0]
         val = sqrt(3)/self.beam_gamma
@@ -177,6 +177,7 @@ class LightDist():
             u = fmin + random()*(fmax-fmin)
             if u < self.otr_pdf(x):
                 oangles[i] = x
+                O[i] = x
                 i = i+1
        
         np.save('mc_otr',oangles)
@@ -189,7 +190,7 @@ class LightDist():
         V = RotateX2(V,-oangles)
         V = RotateZ2(V,rangles)
         V = InvertSetRaysToZVelocity2(V,theta,phi)
-        return V
+        return V, O
     
     def MoyalScatter(self, V):
         #Point ray to z axis

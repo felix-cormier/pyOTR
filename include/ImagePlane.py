@@ -8,17 +8,17 @@ class ImagePlane(OpticalComponent):
         self.name = 'ImagePlane'
         self.R = R
 
-    def RaysTransport(self, X, V):
+    def RaysTransport(self, X, V, O):
         # Go to local coords:
         X = self.transform_coord.TransfrmPoint(X)
         V = self.transform_coord.TransfrmVec(V)
         # Get the interaction points X and the V reflected:
-        X, V = self.PlaneIntersect(X, V)
+        X, V, O = self.PlaneIntersect(X, V, O)
         # Here we actually do not transform back to Global Coords, since it makes more sense to plot things
         # with respect to the Image Plane.
-        return X, V
+        return X, V, O
 
-    def PlaneIntersect(self, X, V):
+    def PlaneIntersect(self, X, V, O):
         z = X[:, 2]     # selects the z component of all rays
         Vz = V[:, 2]    # selects the Vz component of all rays
         eps = 10e-5  # tolerance
@@ -30,12 +30,14 @@ class ImagePlane(OpticalComponent):
         Vz = Vz[GoodRays]
         X = X[GoodRays]
         V = V[GoodRays]
+        O = O[GoodRays]
         # Only keep rays that are pointing at the Plane:
         ToPlane = Vz / np.abs(Vz) != (z - Z) / np.abs(z - Z)
         z = z[ToPlane]
         Vz = Vz[ToPlane]
         X = X[ToPlane]
         V = V[ToPlane]
+        O = O[ToPlane]
         # interaction at z = 0, by construction:
         t = (Z - z) / Vz
         assert (t > 0).all()
@@ -47,5 +49,6 @@ class ImagePlane(OpticalComponent):
         keep = np.diag(X.dot(X.T)) < (self.R**2)
         X = X[keep]
         V = V[keep]
+        O = O[keep]
         assert X.shape == V.shape
-        return X, V
+        return X, V, O

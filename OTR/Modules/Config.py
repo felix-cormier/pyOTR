@@ -61,6 +61,8 @@ M1 = {
     'f': 550.,
     'H': 120.,
     'D': 120.,
+   #  'H': 10000.,
+   #  'D': 10000.,
     'rough': False,
     'name': 'ParaMirror1'
 }
@@ -99,9 +101,12 @@ camera = {
     'npxlX': 484,
     'npxlY': 704,
     'focal distance': 60.,
-    'R': 1000.,
+    'R': 10_000.,
     'name': 'ImagePlane',
     
+    #camera at M1 position
+    #'X': np.array([[1100., 0., 0.]]),
+    #'angles': np.array([Conv(90), Conv(90), Conv(90)]),
 
     #camera at M2 position
     #'X': np.array([[1100., 3850., 0.]]),

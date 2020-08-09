@@ -6,20 +6,20 @@ class Mirror(OpticalComponent):
     def __init__(self, name=None):
         OpticalComponent.__init__(self, name=name)
 
-    def PlaneTransport(self, X, V):
-        X, V = self.PlaneIntersect(X, V)
-        return X, self.PlaneReflect(V)
+    def PlaneTransport(self, X, V, O):
+        X, V, O = self.PlaneIntersect(X, V, O)
+        return X, self.PlaneReflect(V), O
 
-    def RaysTransport(self, X, V):
+    def RaysTransport(self, X, V, O):
         # Go to local coords:
         X = self.transform_coord.TransfrmPoint(X)
         V = self.transform_coord.TransfrmVec(V)
         # Get the interaction points X and the V reflected:
-        X, V = self.PlaneTransport(X, V)
+        X, V, O = self.PlaneTransport(X, V, O)
         # Transform back to the global coords:
         X = self.transform_coord.TransfrmPoint(X, inv=True)
         V = self.transform_coord.TransfrmVec(V, inv=True)
-        return X, V
+        return X, V, O
 
 
 class PlaneMirror(Mirror):
@@ -31,7 +31,7 @@ class PlaneMirror(Mirror):
     def PlaneReflect(self, V):
         return V - 2 * V.dot(self.normal.T) * self.normal
 
-    def PlaneIntersect(self, X, V):
+    def PlaneIntersect(self, X, V, O):
         z = X[:, 2]     # selects the z component of all rays
         Vz = V[:, 2]    # selects the Vz component of all rays
         eps = 10e-5  # tolerance
@@ -43,12 +43,14 @@ class PlaneMirror(Mirror):
         Vz = Vz[GoodRays]
         X = X[GoodRays]
         V = V[GoodRays]
+        O = O[GoodRays]
         # Only keep rays that are pointing at the mirror:
         ToPlane = Vz / np.abs(Vz) != (z - Z) / np.abs(z - Z)
         z = z[ToPlane]
         Vz = Vz[ToPlane]
         X = X[ToPlane]
         V = V[ToPlane]
+        O = O[ToPlane]
         # interaction at z = 0, by construction:
         t = (Z - z) / Vz
         assert (t > 0).all()
@@ -60,6 +62,7 @@ class PlaneMirror(Mirror):
         keep = np.diag(X.dot(X.T)) < (self.R**2)
         X = X[keep]
         V = V[keep]
+        O = O[keep]
         assert X.shape == V.shape
         return X, V
 
@@ -100,7 +103,7 @@ class ParaMirror(Mirror):
     def PlaneReflect(self, V):
         return V - 2 * np.diag(V.dot(self.normal.T)).reshape(V.shape[0], 1) * self.normal
 
-    def PlaneIntersect(self, X, V):
+    def PlaneIntersect(self, X, V, O):
         # Initial guess:
         X0 = X
         V0 = V
@@ -127,5 +130,6 @@ class ParaMirror(Mirror):
         keep = np.logical_and(vertical, circle)
         X0 = X0[keep]
         V0 = V0[keep]
+        O = O[keep]
         self.normal = self.GetNormal(X0)
-        return X0, V0
+        return X0, V0, O

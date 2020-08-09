@@ -16,5 +16,5 @@ def GetGeometry():
 
     system = OpticalSystem.OpticalSystem()
     system.AddComponent(foil)
-   # system.AddComponent(image)
+    #system.AddComponent(image)
     return system

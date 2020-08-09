@@ -14,8 +14,8 @@ save = True
 name = '../OTR/data/otr'  # name prefix used to create all outputs
 logfile = name + '.log'  # log output will be directed to this file and to screen
 
-nrays = 1_000_000
-chunck = 1000  # 0 if no division is to be made
+nrays = 10000
+chunck = 10  # 0 if no division is to be made
 
 beam = {
     'x': 0.,
