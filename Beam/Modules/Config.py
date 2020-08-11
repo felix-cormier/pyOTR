@@ -10,8 +10,8 @@ def Conv(deg):
 VERBOSE = 1  # Set to 1 for debugging info
 
 save = True
-#name = 'output/scat'
-name = '../OTR/data/otr'  # name prefix used to create all outputs
+name = 'output/scat'
+#name = '../OTR/data/otr'  # name prefix used to create all outputs
 logfile = name + '.log'  # log output will be directed to this file and to screen
 
 nrays = 1_000_000
@@ -49,12 +49,15 @@ camera = {
     'npxlX': 484,
     'npxlY': 704,
     'focal distance': 60.,
+    #At CalibFoil
+    'X': np.array([[0., 0., 1.]]),
+    'angles': np.array([0.,0.,0.]),
     #At foil
     #'X': np.array([[0., 0., 0.]]),
     #'angles': np.array([0.,0.,0.]),
     #At M1
-    'X': np.array([[1100., 0., 0.]]),
-    'angles': np.array([Conv(90), Conv(90), Conv(90)]),
+    #'X': np.array([[1100., 0., 0.]]),
+    #'angles': np.array([Conv(90), Conv(90), Conv(90)]),
     'R': 10_000.,
     'name': 'ImagePlane'
 }

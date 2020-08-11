@@ -36,7 +36,7 @@ if __name__ == '__main__':
         np.save(f'{cf.name}_protonsV', V)
 
     if cf.chunck > 0:
-        X, V = PrepareData(X, V, chunck=cf.chunck)
+        X, V  = PrepareData(X, V, chunck=cf.chunck)
 
     # Get the Foil Geometry: 
     system = Geometry.GetGeometry()

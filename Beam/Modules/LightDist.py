@@ -83,8 +83,8 @@ def Landau(mu, sigma):
 
 class LightDist():
     def __init__(self, seed=0):
-        self.beam_gamma = 32.
-        self.theta_range = 0.3  # rad
+        self.beam_gamma = 40.
+        self.theta_range = pi/2  # rad
         self.f_thtMax = self.OTRcdf(self.theta_range) # cdf is monotonically increasing
 
     def OTRcdf(self, theta):
@@ -111,7 +111,7 @@ class LightDist():
     def otr_pdf(self, x):
         norm = self.otr_func(self.theta_range)
         gmma = self.beam_gamma
-        y = (x**3/((gmma**-2+x**2)**2))/norm
+        y = ((x*x*sin(x))/((gmma**-2+x**2)**2))/norm
         return y
     
     def GetOTRRays(self, V):

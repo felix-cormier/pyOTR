@@ -26,6 +26,19 @@ def MakeHoles(fHdist=7., fHdmtr=1.2, save='data/calib_holes'):
     np.save(save, holes)
     return holes
 
+def MakeCross(dx=5.657, dy=4., diam=1.2, cross=1):
+    holes = []
+    for i in range(1,4):
+        x = i*dx
+        y = i*dy
+        holes.append((x, 0., 0., diam))
+        holes.append((-x, 0., 0., diam))
+        holes.append((0., 0., y, diam))
+        holes.append((0., 0., -y, diam))
+        if cross == 2:
+            holes = holes[-4:]
+    return np.array(holes)
+
 
 def ParaSquare(t):
     if t >= 0. and t < 1:

@@ -56,13 +56,16 @@ class Foil(OpticalComponent):
 # class CalibrationFoil(OpticalComponent, Foil):
 class CalibrationFoil(Foil):
     def __init__(self, normal=np.array([[0., 1., 0.]]), diam=50.,
-                 hole_dist=7., hole_diam=1.2, name=None):
+                 hole_dist=7., hole_diam=1.2, name=None, cross=0):
         Foil.__init__(self, normal=normal, diam=diam)
         self.hole_dist = hole_dist
         self.hole_diam = hole_diam
-        self.holes = self.GetHoles()
+        self.holes = self.GetHoles(cross)
 
-    def GetHoles(self):
+    def GetHoles(self, cross=0):
+        if cross == 1 or cross ==2:
+            from MakeCalibHoles import MakeCross
+            return MakeCross(5.657, 4., 1.2, cross)
         import os
         from MakeCalibHoles import MakeHoles
         calibfile = 'data/calib_holes.npy'
@@ -116,7 +119,7 @@ class MetalFoil(Foil):
         V = self.transform_coord.TransfrmVec(V)
         # Get X interaction points and V reflected:
         Xint, Vr = self.PlaneTransport(X, V) #but PlaneTransport still removes
-        Vr = self.light.MoyalScatter(Vr)
+        #Vr = self.light.MoyalScatter(Vr)
         Vr = self.light.GetOTRRays4(Vr) #should be before, but does this make changes?
         # Transform back to the global coords:
         # Why not just remove rays that don't pass foil here?
