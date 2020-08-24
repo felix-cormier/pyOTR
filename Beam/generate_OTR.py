@@ -30,10 +30,19 @@ if __name__ == '__main__':
     cf.GetTime()
     # Get details about the beam:
     beam = Beam.Beam()
-    X, V = beam.GenerateBeam()
+    if(cf.source == 'protons'):
+        X, V = beam.GenerateBeam()
+    elif(cf.source == 'filament'):
+        X, V = beam.GenerateBackgroundLight()
+    else:
+        print('Not a valid source')
+    
+    #Save initial distribution
     if cf.save:
-        np.save(f'{cf.name}_protonsX', X)
-        np.save(f'{cf.name}_protonsV', V)
+        #np.save(f'{cf.name}_protonsX', X)
+        #np.save(f'{cf.name}_protonsV', V)
+        np.save(f'{cf.name}_bgX', X)
+        np.save(f'{cf.name}_bgV', V)
 
     if cf.chunck > 0:
         X, V  = PrepareData(X, V, chunck=cf.chunck)

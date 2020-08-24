@@ -12,7 +12,7 @@ VERBOSE = 1  # Set to 1 for debugging info
 
 save = True
 inputs = 'data/otr_{}.npy'
-name = 'output/full'  # name prefix used to create all outputs
+name = 'output/m4f_plus100'  # name prefix used to create all outputs
 logfile = name + '.log'  # log output will be directed to this file and to screen
 
 chunck = 1_000
@@ -61,6 +61,8 @@ M1 = {
     'f': 550.,
     'H': 120.,
     'D': 120.,
+   # 'H': 10000.,
+   # 'D': 10000.,
     'rough': False,
     'name': 'ParaMirror1'
 }
@@ -71,6 +73,8 @@ M2 = {
     'f': 550.,
     'H': 120.,
     'D': 120.,
+   # 'H': 10000.,
+   # 'D': 10000.,
     'rough': False,
     'name': 'ParaMirror2'
 }
@@ -81,6 +85,8 @@ M3 = {
     'f': 550.,
     'H': 120.,
     'D': 120.,
+   # 'H': 10000.,
+   # 'D': 10000.,
     'rough': False,
     'name': 'ParaMirror3'
 }
@@ -91,6 +97,8 @@ M4 = {
     'f': 300.,
     'H': 120.,
     'D': 120.,
+   # 'H': 10000.,
+   # 'D': 10000.,
     'rough': False,
     'name': 'ParaMirror4'
 }
@@ -116,7 +124,7 @@ camera = {
     #'angles': np.array([0., Conv(90), 0.])
 
     #camera at M4 focal point
-    'X': np.array([[-1100. + 2*M4['f'], 6522., 0.]]),
+    'X': np.array([[-1100. + 2*M4['f'] - 100., 6522., 0.]]),
     'angles': np.array([Conv(90), Conv(90), 0.])
     
 

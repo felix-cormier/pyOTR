@@ -14,7 +14,7 @@ class Foil(OpticalComponent):
         return self.diam
 
     def PlaneIntersect(self, X, V):
-        y = X[:, 1]     # selects the y component of all rays
+        y = X[:, 1]     # selects the y component of all rays, changed from 1
         Vy = V[:, 1]    # selects the vy component of all rays
         eps = 10e-5  # tolerance
         Y = 0.       # Position of Foil Plane in Foil Reference System
@@ -33,7 +33,7 @@ class Foil(OpticalComponent):
         V = V[ToPlane]
         # interaction at y = 0, by construction:
         t = (Y - y) / Vy
-        assert (t > 0).all()
+        #assert (t > 0).all()
         t.resize(t.shape[0], 1)
         Xint = X + V * t
         assert (np.abs(Xint[:, 1] - Y) < eps).all()
@@ -95,6 +95,7 @@ class CalibrationFoil(Foil):
         V = self.transform_coord.TransfrmVec(V)
         # Get X interaction points and V reflected:
         Xint, Vr = self.PlaneTransport(X, V)
+
         passed = self.PassHole(Xint)
         Vr = np.array([v if p else vr
                        for p, v, vr in zip(passed, V, Vr)])

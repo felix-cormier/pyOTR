@@ -10,20 +10,29 @@ def Conv(deg):
 VERBOSE = 1  # Set to 1 for debugging info
 
 save = True
-name = 'output/scat'
-#name = '../OTR/data/otr'  # name prefix used to create all outputs
+#name = 'output/scat'
+name = '../OTR/data/otr'  # name prefix used to create all outputs
 logfile = name + '.log'  # log output will be directed to this file and to screen
 
 nrays = 1_000_000
 chunck = 1000  # 0 if no division is to be made
+source = 'filament' #background or proton
 
 beam = {
-    'x': 0.,
+    'x': -1000.,
     'y': 0.,
-    'z': -100.,
+    'z': 0.,
     'cov': np.diag([9., 9., 0.]),
     'Vtype': 'parallel',  # need to implement divergent beam also
-    'vcov': np.diag([0.05, 0.05, 1.])  # not yet used, vz needs to be constrained by vx/vy
+    'vcov': np.diag([0.05, 0.05, 1.]),  # not yet used, vz needs to be constrained by vx/vy
+
+}
+
+background = {
+    'length':25., 
+    'spread':0.005,
+    'cfoil':1, #0,1,2 -> normal, cross, diamond
+    'Vtype': 'parallel'  # need to implement divergent beam also
 }
 
 foils = {
@@ -42,22 +51,26 @@ foil = {
     'angles': np.array([0., Conv(90), Conv(45)]),
     'normal': np.array([[0, -1, 0]]),
     'D': 50.,
-    'name': foils[3]
+    'name': foils[3],
+    'tht_range': 0.3
 }
 
 camera = {
     'npxlX': 484,
     'npxlY': 704,
     'focal distance': 60.,
-    #At CalibFoil
-    'X': np.array([[0., 0., 1.]]),
-    'angles': np.array([0.,0.,0.]),
     #At foil
     #'X': np.array([[0., 0., 0.]]),
-    #'angles': np.array([0.,0.,0.]),
+    #Angles for pointed at bg dist
+    #'angles': np.array([Conv(90), Conv(90), Conv(90)]),
+    #Angles for pointed at beam
+    #'angles': np.array([0., 0., 0.]),
     #At M1
     #'X': np.array([[1100., 0., 0.]]),
     #'angles': np.array([Conv(90), Conv(90), Conv(90)]),
+    #For background
+    'X': np.array([[50., 0., 0.]]),
+    'angles': np.array([Conv(90), Conv(90), Conv(90)]),
     'R': 10_000.,
     'name': 'ImagePlane'
 }
