@@ -10,18 +10,29 @@ def Conv(deg):
 VERBOSE = 1  # Set to 1 for debugging info
 
 save = True
-#name = 'output/scat'
-name = '../OTR/data/otr'  # name prefix used to create all outputs
+#name = 'output/bg_gen_0.0'
+#name = 'output/bg_gen_0.01'
+#name = 'output/bg_gen_0.025'
+#name = 'output/bg_gen_0.05'
+#name = 'output/bg_gen_0.075'
+#name = 'output/bg_gen_0.1'
+name = 'output/bg_gen_0.15'
+#name = '../OTR/data/otr'  # name prefix used to create all outputs
 logfile = name + '.log'  # log output will be directed to this file and to screen
 
 nrays = 1_000_000
 chunck = 1000  # 0 if no division is to be made
-source = 'filament' #background or proton
+source = 'filament' #backlight (filament) or proton beam (protons)
 
 beam = {
-    'x': -1000.,
+    'x': -1000., #for filament backlight
+   # 'x': 0.,
     'y': 0.,
     'z': 0.,
+    #'z': -100.,
+    #'gamma':21., #E = 20 GeV
+    'gamma':32., #E = 30 GeV
+#    'gamma':53.5, #E = 50 GeV
     'cov': np.diag([9., 9., 0.]),
     'Vtype': 'parallel',  # need to implement divergent beam also
     'vcov': np.diag([0.05, 0.05, 1.]),  # not yet used, vz needs to be constrained by vx/vy
@@ -30,9 +41,17 @@ beam = {
 
 background = {
     'length':25., 
-    'spread':0.005,
     'cfoil':1, #0,1,2 -> normal, cross, diamond
-    'Vtype': 'parallel'  # need to implement divergent beam also
+    #'spread':0.0,
+    #'spread':0.01,
+    #'spread':0.025,
+    #'spread':0.05,
+    #'spread':0.075,
+    #'spread':0.1,
+    'spread':0.001,
+    'style': 'cross',#cross or square
+    'Vtype': 'divergent'  #parallel or divergent
+    #potentially add cross parameter
 }
 
 foils = {
@@ -60,17 +79,17 @@ camera = {
     'npxlY': 704,
     'focal distance': 60.,
     #At foil
-    #'X': np.array([[0., 0., 0.]]),
+    'X': np.array([[0., 0., 0.]]),
     #Angles for pointed at bg dist
-    #'angles': np.array([Conv(90), Conv(90), Conv(90)]),
+    'angles': np.array([Conv(90), Conv(90), Conv(90)]),
     #Angles for pointed at beam
     #'angles': np.array([0., 0., 0.]),
     #At M1
     #'X': np.array([[1100., 0., 0.]]),
     #'angles': np.array([Conv(90), Conv(90), Conv(90)]),
     #For background
-    'X': np.array([[50., 0., 0.]]),
-    'angles': np.array([Conv(90), Conv(90), Conv(90)]),
+    #'X': np.array([[20., 0., 0.]]),#produced odd results
+    #'angles': np.array([Conv(90), Conv(90), Conv(90)]),
     'R': 10_000.,
     'name': 'ImagePlane'
 }

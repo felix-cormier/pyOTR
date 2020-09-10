@@ -3,6 +3,7 @@ import numpy as np
 import Config as cf
 import Beam
 import Geometry
+import time
 from PrepareData import PrepareData
 
 @cf.timer
@@ -33,16 +34,21 @@ if __name__ == '__main__':
     if(cf.source == 'protons'):
         X, V = beam.GenerateBeam()
     elif(cf.source == 'filament'):
-        X, V = beam.GenerateBackgroundLight()
+        start = time.time()
+        X, V = beam.GenerateFilamentBacklight_v2()
+        end = time.time();
+        print(f"Filament backlight generation time: {end - start}")
     else:
         print('Not a valid source')
     
     #Save initial distribution
     if cf.save:
-        #np.save(f'{cf.name}_protonsX', X)
-        #np.save(f'{cf.name}_protonsV', V)
-        np.save(f'{cf.name}_bgX', X)
-        np.save(f'{cf.name}_bgV', V)
+        if(cf.source == 'protons'):
+            np.save(f'{cf.name}_protonsX', X)
+            np.save(f'{cf.name}_protonsV', V)
+        elif(cf.source == 'filament'):
+            np.save(f'{cf.name}_filamentX', X)
+            np.save(f'{cf.name}_filamentV', V)
 
     if cf.chunck > 0:
         X, V  = PrepareData(X, V, chunck=cf.chunck)

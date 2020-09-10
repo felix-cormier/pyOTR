@@ -84,7 +84,7 @@ def Landau(mu, sigma):
 
 class LightDist():
     def __init__(self, seed=0):
-        self.beam_gamma = 40.
+        self.beam_gamma = cf.beam['gamma']
         self.theta_range = cf.foil['tht_range']  # rad
         self.f_thtMax = self.OTRcdf(self.theta_range) # cdf is monotonically increasing
 
