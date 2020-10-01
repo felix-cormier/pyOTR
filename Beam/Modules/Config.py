@@ -10,23 +10,20 @@ def Conv(deg):
 VERBOSE = 1  # Set to 1 for debugging info
 
 save = True
+name = 'output/filament'
 #name = 'output/bg_gen_0.0'
-#name = 'output/bg_gen_0.01'
 #name = 'output/bg_gen_0.025'
-#name = 'output/bg_gen_0.05'
 #name = 'output/bg_gen_0.075'
-#name = 'output/bg_gen_0.1'
-name = 'output/bg_gen_0.15'
 #name = '../OTR/data/otr'  # name prefix used to create all outputs
 logfile = name + '.log'  # log output will be directed to this file and to screen
 
-nrays = 1_000_000
-chunck = 1000  # 0 if no division is to be made
-source = 'filament' #backlight (filament) or proton beam (protons)
+nrays = 1_000
+chunck = 1_000  # 0 if no division is to be made
+source = 'laser' #backlight (filament) or proton beam (protons)
 
 beam = {
     'x': -1000., #for filament backlight
-   # 'x': 0.,
+    #'x': 0.,
     'y': 0.,
     'z': 0.,
     #'z': -100.,
@@ -43,18 +40,37 @@ background = {
     'length':25., 
     'cfoil':1, #0,1,2 -> normal, cross, diamond
     #'spread':0.0,
-    #'spread':0.01,
     #'spread':0.025,
-    #'spread':0.05,
-    #'spread':0.075,
-    #'spread':0.1,
-    'spread':0.001,
+    'spread':0.075,
+    #'spread':0.001,
     'style': 'cross',#cross or square
     'Vtype': 'divergent'  #parallel or divergent
     #potentially add cross parameter
 }
 
+M0 = {
+    'normal': np.array([[0., 0., -1.]]),
+    'R': 100.,
+    'X': np.zeros((1, 3)),
+    #'angles': np.array([0., Conv(90), -Conv(135)]),
+    'angles': np.array([-Conv(45), Conv(90), Conv(0)]),
+    'yrot': False,
+    'name': 'PlaneMirror'
+}
+
+reflector = {
+    'normal': np.array([[1., 0., 0.]]),
+    'R': 1000.,
+    'X': np.array([-377.,0.,0.]),
+    #'angles': np.array([-Conv(45), 0., 0.]),
+    #'angles': np.array([Conv(45), Conv(90), 0.]),
+    'angles': np.array([0., 0., Conv(70.18)]),
+    'yrot': False,
+    'name': 'PerfectReflector'
+}
+
 foils = {
+        #return points + self.X if inv else points - self.X
     0: 'Blank',
     1: 'Fluorescent',
     2: 'Calibration',
@@ -68,6 +84,7 @@ foils = {
 foil = {
     'X': np.zeros((1, 3)),
     'angles': np.array([0., Conv(90), Conv(45)]),
+   # 'angles': np.array([0., Conv(90), 0.]),
     'normal': np.array([[0, -1, 0]]),
     'D': 50.,
     'name': foils[3],
@@ -78,10 +95,16 @@ camera = {
     'npxlX': 484,
     'npxlY': 704,
     'focal distance': 60.,
+    'yrot': True,
     #At foil
-    'X': np.array([[0., 0., 0.]]),
+    #'X': np.array([[10., 0., 0.]]),
+    #Trying to test no tilt
+    #'X': np.array([[0., 0., -20.]]),
+    #Imaging filament
+    'X': np.array([[0.,0.,0.]]),
+    'angles': np.array([0., -Conv(90), 0.]),
     #Angles for pointed at bg dist
-    'angles': np.array([Conv(90), Conv(90), Conv(90)]),
+    #'angles': np.array([0., -Conv(90), 0.]),
     #Angles for pointed at beam
     #'angles': np.array([0., 0., 0.]),
     #At M1

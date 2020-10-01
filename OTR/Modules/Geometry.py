@@ -2,6 +2,7 @@ import Config as cf
 import Mirror
 import ImagePlane
 import OpticalSystem
+import numpy as np
 
 
 def GetGeometry():
@@ -32,10 +33,10 @@ def GetGeometry():
 
     system = OpticalSystem.OpticalSystem()
     #system.AddComponent(M0)
-    system.AddComponent(M1)
-    system.AddComponent(M2)
-    system.AddComponent(M3)
-    system.AddComponent(M4)
+    #system.AddComponent(M1)
+    #system.AddComponent(M2)
+    #system.AddComponent(M3)
+    #system.AddComponent(M4)
     system.AddComponent(image)
 
     return system

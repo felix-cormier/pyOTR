@@ -14,11 +14,13 @@ class Mirror(OpticalComponent):
         # Go to local coords:
         X = self.transform_coord.TransfrmPoint(X)
         V = self.transform_coord.TransfrmVec(V)
+        print('at mirror')
+        print(V[:10])
         # Get the interaction points X and the V reflected:
         X, V = self.PlaneTransport(X, V)
         # Transform back to the global coords:
-        X = self.transform_coord.TransfrmPoint(X, inv=True)
-        V = self.transform_coord.TransfrmVec(V, inv=True)
+        #X = self.transform_coord.TransfrmPoint(X, inv=True)
+        #V = self.transform_coord.TransfrmVec(V, inv=True)
         return X, V
 
 
@@ -64,7 +66,7 @@ class PlaneMirror(Mirror):
         return X, V
 
 
-lass ParaMirror(Mirror):
+class ParaMirror(Mirror):
     def __init__(self, f=550., H=120., D=120., rough=False, name=None):
         Mirror.__init__(self, name=name)
         self.f = f  # focal length

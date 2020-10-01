@@ -1,5 +1,7 @@
 import numpy as np
+from numpy import sqrt, pi, exp
 import LightDist
+import Config as cf
 from OpticalComponent import OpticalComponent
 
 
@@ -124,6 +126,71 @@ class MetalFoil(Foil):
         Vr = self.light.GetOTRRays4(Vr) #should be before, but does this make changes?
         # Transform back to the global coords:
         # Why not just remove rays that don't pass foil here?
+        Xint = self.transform_coord.TransfrmPoint(Xint, inv=True)
+        Vr = self.transform_coord.TransfrmVec(Vr, inv=True)
+
+        return Xint, Vr
+
+class DimpledFoil(Foil):
+    def __init__(self, normal=np.array([[0., 1., 0.]]), diam=50.,
+                 hole_dist=7., hole_diam=1.2, name=None):
+        Foil.__init__(self, normal=normal, diam=diam) #child init overrides parent init
+        self.reflect=1 #should set in config
+        self.dffs=0 #do we need this? should set in config
+        self.eps = 10. #should set in configuration
+        self.light = LightDist.LightDist()
+
+    def norm_xy(self, X):
+        sig = sqrt(cf.beam['cov'][0][0])
+        xsq = X[:,0]*X[:,0]
+        ysq = X[:,1]*X[:,1]
+        const = 1/(2*pi*sig*sig)
+        var = (-1/(2*sig*sig))*(xsq+ysq)
+        g = self.eps*const*exp(var)
+        return g
+
+    def dzbydx(self, X):
+        sig = sqrt(cf.beam['cov'][0][0])
+        dzbydx = 1.- X[:,0]*self.eps*self.norm_xy(X)/(sig**2)
+        #dzbydx = -X[:,0]*self.eps*self.norm_xy(X)/(sig**2)
+        return dzbydx
+
+
+    def dzbydy(self, X):
+        sig = sqrt(cf.beam['cov'][0][0])
+        dzbydy = -X[:,1]*self.eps*self.norm_xy(X)/(sig**2)
+        return dzbydy
+
+    def GetN(self, X):
+        #Get the normal vector corresponding to dimpled foil at the locations where the beam crosses the foil
+        dzdx = self.dzbydx(X)
+        dzdy = self.dzbydy(X)
+        A = sqrt(dzdx**2 + dzdy**2 +1)
+        nx = -dzdx/A 
+        ny = -dzdy/A
+        nz = np.ones(X.shape[0])/A
+        N = np.array([nx,ny,nz]).T
+        N.reshape(X.shape[0],3)
+        return N
+
+    def DimpleReflect(self,N,V):
+        scale = (V*N).sum(1)
+        scale.resize(scale.shape[0], 1)
+        return V - 2*(scale)*N
+
+    def RaysTransport(self, X, V):
+        # Go to local coords:
+        X = self.transform_coord.TransfrmPoint(X)
+        V = self.transform_coord.TransfrmVec(V)
+        # Get X interaction points and V reflected:
+        Xint, V = self.PlaneIntersect(X, V)
+        Xint_global = self.transform_coord.TransfrmPoint(Xint, inv=True)
+        #Use Xint positions to define normals
+        N = self.GetN(Xint_global)
+        N = self.transform_coord.TransfrmVec(N)
+        Vr = self.DimpleReflect(N,V)
+        Vr = self.light.GetOTRRays4(Vr) 
+        # Transform back to the global coords:
         Xint = self.transform_coord.TransfrmPoint(Xint, inv=True)
         Vr = self.transform_coord.TransfrmVec(Vr, inv=True)
 

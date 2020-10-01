@@ -1,4 +1,5 @@
 import numpy as np
+from numpy import sin, cos, pi
 import Config as cf
 from scipy.stats import truncnorm
 
@@ -10,7 +11,6 @@ class Beam():
         self.y = cf.beam['y']
         self.z = cf.beam['z']
         self.cov = cf.beam['cov']
-        print("(" + str(self.x) + "," + str(self.y) + "," + str(self.z) + ")")
         
     def GenerateRaysV(self, n):
         Vtype = cf.beam['Vtype']
@@ -123,4 +123,27 @@ class Beam():
                 i+=1
 
         V = self.GenerateBackgroundLightV(X.shape)
+    
+    def GenerateFilamentV(self, tilt):
+        phi = np.random.uniform(0,2*pi,self.nrays)
+        theta = np.random.uniform(0,pi,self.nrays)
+        vx=sin(theta)*cos(phi)
+        vy=sin(theta)*sin(phi)
+        vz=cos(theta)
+        V=np.array([vx,vy,vz]).T
+        return V
+    
+    def GenerateFilament(self):
+        h = 10.0
+        tilt = pi/4
+        xpos = -10.0
+        zpos = 10.0
+        r = np.random.uniform(-h/2,h/2,self.nrays)
+        x = r*cos(tilt) + xpos
+        y = r*sin(tilt)
+        z = np.zeros(self.nrays) + zpos
+        X = np.array([x,y,z]).T
+        V = self.GenerateFilamentV(tilt)
         return X, V
+
+

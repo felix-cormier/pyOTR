@@ -12,7 +12,7 @@ VERBOSE = 1  # Set to 1 for debugging info
 
 save = True
 inputs = 'data/otr_{}.npy'
-name = 'output/otr_sys'  # name prefix used to create all outputs
+name = 'output/big_mirror_'  # name prefix used to create all outputs
 logfile = name + '.log'  # log output will be directed to this file and to screen
 
 chunck = 1_000
@@ -40,11 +40,10 @@ foils = {
 
 foil = {
     'X': np.zeros((1, 3)),
-    'angles': np.array([0., Conv(90), Conv(45)]),
+    'angles': np.array([0., Conv(90), 0.]),
     'normal': np.array([[0, -1, 0]]),
-    'D': 50.,
-    'name': foils[3],
-    'tht_range': 0.3
+    'D': 50.,  # diameter - 55.0, original C++ code, not sure why
+    'name': foils[3]
 }
 
 M0 = {
@@ -60,10 +59,10 @@ M1 = {
     'X': np.array([[1100., 0., 0.]]),
     'angles': np.array([0., 0., 0.]),
     'f': 550.,
-    'H': 120.,
-    'D': 120.,
-   # 'H': 100_000.,
-   # 'D': 100_000.,
+#    'H': 120.,
+#   'D': 120.,
+    'H': 10000.,
+    'D': 10000.,
     'rough': False,
     'name': 'ParaMirror1'
 }
@@ -72,10 +71,10 @@ M2 = {
     'X': np.array([[1100., 3850., 0.]]),
     'angles': np.array([0., Conv(180), 0.]),
     'f': 550.,
-    'H': 120.,
-    'D': 120.,
-   # 'H': 100_000.,
-   # 'D': 100_000.,
+#    'H': 120.,
+#    'D': 120.,
+     'H': 10000.,
+     'D': 10000.,
     'rough': False,
     'name': 'ParaMirror2'
 }
@@ -84,10 +83,10 @@ M3 = {
     'X': np.array([[-1100., 3850., 0.]]),
     'angles': np.array([Conv(90), Conv(180), Conv(-90)]),
     'f': 550.,
-    'H': 120.,
-    'D': 120.,
-   # 'H': 100_000.,
-   # 'D': 100_000.,
+#    'H': 120.,
+#    'D': 120.,
+    'H': 10000.,
+    'D': 10000.,
     'rough': False,
     'name': 'ParaMirror3'
 }
@@ -95,11 +94,11 @@ M3 = {
 M4 = {
     'X': np.array([[-1100., 6522., 0.]]),
     'angles': np.array([Conv(180.), 0., 0.]),
-	'f':300.,
-    'H': 120.,
-    'D': 120.,
-   # 'H': 100_000.,
-   # 'D': 100_000.,
+    'f': 300.,
+#    'H': 120.,
+#    'D': 120.,
+    'H': 10000.,
+    'D': 10000.,
     'rough': False,
     'name': 'ParaMirror4'
 }
@@ -108,24 +107,10 @@ camera = {
     'npxlX': 484,
     'npxlY': 704,
     'focal distance': 60.,
-    'R': 10_000.,
+    'R': 1000.,
     'name': 'ImagePlane',
     
-    #At foil
-    #'X': np.array([[0., 0., 0.]]),
-    #Angles for pointed at bg dist
-  #  'angles': np.array([Conv(90), Conv(90), Conv(90)]),
-    #Angles for pointed at beam
-    #'angles': np.array([0., 0., 0.]),
-    
-    #At M1
-    'X': np.array([[1100., 0., 0.]]),
-    'angles': np.array([Conv(90), Conv(90), Conv(90)]),
-    
-    #For background
-    #'X': np.array([[20., 0., 0.]]),#produced odd results
-    #'angles': np.array([Conv(90), Conv(90), Conv(90)]),
-    
+
     #camera at M2 position
     #'X': np.array([[1100., 3850., 0.]]),
     #'angles': np.array([0., Conv(90), 0.])
@@ -139,8 +124,12 @@ camera = {
     #'angles': np.array([0., Conv(90), 0.])
 
     #camera at M4 focal point
-    #'X': np.array([[-1100. + 2*M4['f'], 6522., 0.]]),
-    #'angles': np.array([Conv(90), Conv(90), 0.])
+    'X': np.array([[-1100. + 2*M4['f'], 6522., 0.]]),
+    'angles': np.array([Conv(90), Conv(90), 0.])
+    
+
+
+
 }
 
 level = logging.DEBUG if VERBOSE else logging.INFO

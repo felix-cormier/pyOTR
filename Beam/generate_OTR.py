@@ -2,6 +2,7 @@ import concurrent.futures
 import numpy as np
 import Config as cf
 import Beam
+import Laser
 import Geometry
 import time
 from PrepareData import PrepareData
@@ -30,14 +31,25 @@ if __name__ == '__main__':
 
     cf.GetTime()
     # Get details about the beam:
-    beam = Beam.Beam()
+    #beam = Beam.Beam()
+    laser = Laser.Laser(rad=0.1, nrays=100_000)
+    #laser.Place(-1388.1, 837.7, 0., np.array([0.,0.,cf.Conv(39.64)]))
+    delt = 0.4
+    laser.Place(-1388.1, 837.7, -delt, np.array([0.,0.,cf.Conv(39.64)]))
+    #laser.Place(-1388.1, 837.7, 0., np.array([0.,0.,cf.Conv(39.64)]))
     if(cf.source == 'protons'):
         X, V = beam.GenerateBeam()
     elif(cf.source == 'filament'):
         start = time.time()
-        X, V = beam.GenerateFilamentBacklight_v2()
+       # X, V = beam.GenerateFilamentBacklight_v1()
+        X, V = beam.GenerateFilament()
         end = time.time();
         print(f"Filament backlight generation time: {end - start}")
+    elif(cf.source == 'laser'):
+        start = time.time()
+        X, V = laser.GenerateRays()
+        end = time.time();
+        #print(f"Filament backlight generation time: {end - start}")
     else:
         print('Not a valid source')
     
@@ -57,6 +69,7 @@ if __name__ == '__main__':
     system = Geometry.GetGeometry()
     # Run simulation:
     X, V = SimulateBeam(X, V, system)
+    print(X[:10])
     if cf.save:
         np.save(f'{cf.name}_X', X)
         np.save(f'{cf.name}_V', V)
