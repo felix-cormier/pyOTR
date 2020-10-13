@@ -33,10 +33,12 @@ class Laser(LightSource):
         X = self.OrientRaysX(X)
         V = self.GenerateRaysV(X.shape)
         V = self.OrientRaysV(V)
-       # print('Starting laser velocity')
-       # print(V[:10])
-       # print('Starting laser position')
-       # print(X[:10])
+        print(' ')
+        print('Starting laser velocity')
+        print(V)
+        print('Starting laser position')
+        print(X)
+        print(' ')
         return X,V
 
     def GenerateXMarker(self):

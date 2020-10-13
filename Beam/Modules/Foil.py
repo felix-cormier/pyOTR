@@ -59,7 +59,7 @@ class Foil(OpticalComponent):
 class CalibrationFoil(Foil):
     def __init__(self, normal=np.array([[0., 1., 0.]]), diam=50.,
                  hole_dist=7., hole_diam=1.2, name=None, cross=0):
-        Foil.__init__(self, normal=normal, diam=diam)
+        Foil.__init__(self, normal=normal, diam=diam, name=name)
         self.hole_dist = hole_dist
         self.hole_diam = hole_diam
         self.holes = self.GetHoles(cross)
@@ -133,32 +133,32 @@ class MetalFoil(Foil):
 
 class DimpledFoil(Foil):
     def __init__(self, normal=np.array([[0., 1., 0.]]), diam=50.,
-                 hole_dist=7., hole_diam=1.2, name=None):
+                 hole_dist=7., hole_diam=1.2, eps=0., name=None):
         Foil.__init__(self, normal=normal, diam=diam) #child init overrides parent init
         self.reflect=1 #should set in config
         self.dffs=0 #do we need this? should set in config
-        self.eps = 10. #should set in configuration
+        self.eps = eps #should set in configuration
         self.light = LightDist.LightDist()
 
     def norm_xy(self, X):
         sig = sqrt(cf.beam['cov'][0][0])
         xsq = X[:,0]*X[:,0]
         ysq = X[:,1]*X[:,1]
-        const = 1/(2*pi*sig*sig)
         var = (-1/(2*sig*sig))*(xsq+ysq)
-        g = self.eps*const*exp(var)
+        const = 1/(2*pi*sig*sig)
+        g = self.eps*exp(var)
         return g
 
     def dzbydx(self, X):
         sig = sqrt(cf.beam['cov'][0][0])
-        dzbydx = 1.- X[:,0]*self.eps*self.norm_xy(X)/(sig**2)
+        dzbydx = 1.- X[:,0]*self.norm_xy(X)/(sig**2)
         #dzbydx = -X[:,0]*self.eps*self.norm_xy(X)/(sig**2)
         return dzbydx
 
 
     def dzbydy(self, X):
         sig = sqrt(cf.beam['cov'][0][0])
-        dzbydy = -X[:,1]*self.eps*self.norm_xy(X)/(sig**2)
+        dzbydy = -X[:,1]*self.norm_xy(X)/(sig**2)
         return dzbydy
 
     def GetN(self, X):

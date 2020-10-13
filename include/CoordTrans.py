@@ -42,9 +42,9 @@ class CoordTrans():
     def GetM2(self):
         phi, theta, psi = self.angles
         # Rotation around the y-axis
-        R = np.array([[cos(theta), 0., sin(theta)],
+        R = np.array([[cos(theta), 0., -sin(theta)],
                       [0., 1., 0.],
-                      [-sin(theta), 0., cos(theta)]])
+                      [sin(theta), 0., cos(theta)]])
         return R
 
     def DoPointTrans(self, points, inv=False):
