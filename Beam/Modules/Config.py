@@ -10,12 +10,12 @@ def Conv(deg):
 VERBOSE = 1  # Set to 1 for debugging info
 
 save = True
-name = 'output/filament'
+#name = 'output/filament'
 #name = 'output/bg_gen_0.0'
 #name = 'output/bg_gen_0.025'
 #name = 'output/bg_gen_0.075'
 #name = '../OTR/data/otr_eps_1.0'  # name prefix used to create all outputs
-#name = '../OTR/data/fil_gen'  # name prefix used to create all outputs
+name = '../OTR/data/fil_gen'  # name prefix used to create all outputs
 logfile = name + '.log'  # log output will be directed to this file and to screen
 
 nrays = 1_000_000
@@ -38,11 +38,11 @@ beam = {
 }
 
 filament = {
-        'Vtype': 'parallel',
-        'spread': 0.05,
+        'Vtype': 'divergent_v2',
+        'spread': 0.02,
         'F1': True, #true for on, false for off
-        'F2': True,
-        'F3': True
+        'F2': False,
+        'F3': False
 }
 
 background = {

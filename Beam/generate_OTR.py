@@ -36,8 +36,9 @@ if __name__ == '__main__':
     #laser = Laser.Laser(rad=0.1, nrays=1_000)
     #laser.Place(-1388.1, 837.7, 0., np.array([0.,0.,cf.Conv(39.64)]))
     
-    filament = Filament.Filament(rad=21.,nrays=1_000_000)
+    filament = Filament.Filament(factor=0.5, nrays = 1_000_000)
     filament.Place(-1388.1, 837.7, 0., np.array([0.,0.,cf.Conv(39.64)]))
+   # filament.Place(0., 0., 0., np.array([0.,0.,0.]))
     
     if(cf.source == 'protons'):
         X, V = beam.GenerateBeam()
@@ -82,6 +83,7 @@ if __name__ == '__main__':
     print('end')
     print(X[:10])
     print(V[:10])
+    print(X.shape)
     if cf.save:
         np.save(f'{cf.name}_X', X)
         np.save(f'{cf.name}_V', V)
