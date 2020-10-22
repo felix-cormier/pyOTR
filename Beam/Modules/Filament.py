@@ -10,12 +10,11 @@ class Filament(LightSource):
         LightSource.__init__(self, nrays, name=name)
         self.nrays = nrays
         self.conversion = factor
-        self.rad = 22.0*self.conversion
-        self.sep = 51.0*self.conversion
-        #self.l_wire = 10.5*self.conversion
+        self.rad = 35.0/2
+        self.sep = 40.0
         self.l_wire = 10.5*self.conversion
-        self.wire = True #true = on
-        self.reflector = False #true = on
+        self.wire = False #true = on
+        self.reflector = True #true = on
         if(self.reflector):
             if cf.filament['Vtype'] == 'parallel':
                 cf.logger.info(f'Selected filament light source with parallel rays')
@@ -36,7 +35,7 @@ class Filament(LightSource):
     
     def GenerateWireRaysV_v2(self):
         ang = 36./1100.
-        scale = 100
+        scale = 1
         u = np.random.uniform(0., 1., scale*self.nrays)
         h_min = cos(ang)
         v = np.random.uniform(h_min,1.,scale*self.nrays)
@@ -59,8 +58,8 @@ class Filament(LightSource):
             V[:,0] = 1.
             return V
         elif Vtype == 'divergent':
-            V[:,1] = truncnorm.rvs(-3*spread,3*spread,loc=0,scale=spread,size=V.shape[0])
-            V[:,2] = truncnorm.rvs(-3*spread,3*spread,loc=0,scale=spread,size=V.shape[0])
+            V[:,1] = truncnorm.rvs(-3,3,loc=0,scale=spread,size=V.shape[0])
+            V[:,2] = truncnorm.rvs(-3,3,loc=0,scale=spread,size=V.shape[0])
             V[:,0] = np.sqrt(1. - V[:,1]*V[:,1] - V[:,2]*V[:,2])
         elif Vtype == 'divergent_v2':
             mean = [0.,0.]

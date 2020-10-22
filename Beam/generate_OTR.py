@@ -33,11 +33,11 @@ if __name__ == '__main__':
     cf.GetTime()
     # Get details about the beam:
     #beam = Beam.Beam()
-    #laser = Laser.Laser(rad=0.1, nrays=1_000)
-    #laser.Place(-1388.1, 837.7, 0., np.array([0.,0.,cf.Conv(39.64)]))
+   # laser = Laser.Laser(rad=0.1, nrays=10_000)
+   # laser.Place(-1062.438, 855.654, 0., np.array([0.,0.,cf.Conv(51.066)]))
     
     filament = Filament.Filament(factor=0.5, nrays = 1_000_000)
-    filament.Place(-1388.1, 837.7, 0., np.array([0.,0.,cf.Conv(39.64)]))
+    filament.Place(-1062.438, 855.654, 0., np.array([0.,0.,cf.Conv(51.066)]))
    # filament.Place(0., 0., 0., np.array([0.,0.,0.]))
     
     if(cf.source == 'protons'):
@@ -56,9 +56,6 @@ if __name__ == '__main__':
     elif(cf.source == 'laser'):
         start = time.time()
         X, V = laser.GenerateRays()
-        print('start')
-        print(X[:10])
-        print(V[:10])
         end = time.time()
         #print(f"Filament backlight generation time: {end - start}")
     else:

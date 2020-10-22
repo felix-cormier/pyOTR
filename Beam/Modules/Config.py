@@ -10,12 +10,12 @@ def Conv(deg):
 VERBOSE = 1  # Set to 1 for debugging info
 
 save = True
-#name = 'output/filament'
+name = 'output/filament'
 #name = 'output/bg_gen_0.0'
 #name = 'output/bg_gen_0.025'
 #name = 'output/bg_gen_0.075'
 #name = '../OTR/data/otr_eps_1.0'  # name prefix used to create all outputs
-name = '../OTR/data/fil_gen'  # name prefix used to create all outputs
+#name = '../OTR/data/fil_gen'  # name prefix used to create all outputs
 logfile = name + '.log'  # log output will be directed to this file and to screen
 
 nrays = 1_000_000
@@ -38,11 +38,11 @@ beam = {
 }
 
 filament = {
-        'Vtype': 'divergent_v2',
+        'Vtype': 'parallel',
         'spread': 0.02,
         'F1': True, #true for on, false for off
-        'F2': False,
-        'F3': False
+        'F2': True,
+        'F3': True
 }
 
 background = {
@@ -81,12 +81,11 @@ plane = {
 }
 
 reflector = {
-    'normal': np.array([[1., 0., 0.]]),
+    'normal': np.array([[0., 1., 0.]]),
     'R': 1000.,
-    'X': np.array([-377.,0.,0.]),
-    #'angles': np.array([-Conv(45), 0., 0.]),
-    'angles': np.array([0., 0., Conv(70.18)]),
-    #'angles': np.array([0., 0., Conv(70.18)]),
+    'X': np.array([-371.166,0.,0.]),
+    #'angles': np.array([0., 0., Conv(70.18)]), #x=oriented
+    'angles': np.array([0., 0., Conv(-51.066/2.)]),
     'yrot': False,
     'name': 'PerfectReflector'
 }
@@ -130,7 +129,7 @@ camera = {
     #Angles for pointed at beam
     #'angles': np.array([0., 0., 0.]),
     #At M1
-    'X': np.array([[20., 0., 0.]]),
+    'X': np.array([[0., 0., 0.]]),
     'angles': np.array([0., -Conv(90), 0.]),
     #For background
     #'X': np.array([[20., 0., 0.]]),#produced odd results
