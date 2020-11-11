@@ -16,6 +16,8 @@ class ImagePlane(OpticalComponent):
         X, V = self.PlaneIntersect(X, V)
         # Here we actually do not transform back to Global Coords, since it makes more sense to plot things
         # with respect to the Image Plane.
+        #X = self.transform_coord.TransfrmPoint(X, inv=True)
+        #V = self.transform_coord.TransfrmVec(V, inv=True)
         return X, V
 
     def PlaneIntersect(self, X, V):

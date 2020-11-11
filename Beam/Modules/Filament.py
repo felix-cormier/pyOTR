@@ -6,15 +6,14 @@ from LightSource import LightSource
 
 
 class Filament(LightSource):
-    def __init__(self, factor=0.5, nrays=1_000_000, name=None):
+    def __init__(self, nrays=1_000_000, name=None):
         LightSource.__init__(self, nrays, name=name)
         self.nrays = nrays
-        self.conversion = factor
         self.rad = 35.0/2
         self.sep = 40.0
-        self.l_wire = 10.5*self.conversion
-        self.wire = False #true = on
-        self.reflector = True #true = on
+        self.l_wire =  8.5
+        self.wire = cf.filament['wire']
+        self.reflector = cf.filament['reflector']
         if(self.reflector):
             if cf.filament['Vtype'] == 'parallel':
                 cf.logger.info(f'Selected filament light source with parallel rays')

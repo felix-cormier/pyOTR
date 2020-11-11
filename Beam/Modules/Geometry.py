@@ -38,13 +38,13 @@ def GetGeometry():
     
  #   plane.Place(X=cf.plane['X'], angles=cf.plane['angles'], yrot=cf.plane['yrot'])
   
- #   foil.Place(X=cf.foil['X'], angles=cf.foil['angles'])
+    foil.Place(X=cf.foil['X'], angles=cf.foil['angles'])
    
     image.Place(X=cf.camera['X'], angles=cf.camera['angles'], yrot=cf.camera['yrot'])
 
     system = OpticalSystem.OpticalSystem()
   #  system.AddComponent(plane)
     system.AddComponent(reflector)
- #   system.AddComponent(foil)
+  #  system.AddComponent(foil)
     system.AddComponent(image)
     return system

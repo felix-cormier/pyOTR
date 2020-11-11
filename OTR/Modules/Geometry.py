@@ -7,6 +7,8 @@ import numpy as np
 
 def GetGeometry():
 
+    system = OpticalSystem.OpticalSystem()
+    
     M0 = Mirror.PlaneMirror(
         normal=cf.M0['normal'], R=cf.M0['R'], name=cf.M0['name'])
 
@@ -29,14 +31,38 @@ def GetGeometry():
     M2.Place(X=cf.M2['X'], angles=cf.M2['angles'])
     M3.Place(X=cf.M3['X'], angles=cf.M3['angles'])
     M4.Place(X=cf.M4['X'], angles=cf.M4['angles'])
-    image.Place(X=cf.camera['X'], angles=cf.camera['angles'])
 
-    system = OpticalSystem.OpticalSystem()
-    #system.AddComponent(M0)
-    #system.AddComponent(M1)
-    #system.AddComponent(M2)
-    #system.AddComponent(M3)
-    #system.AddComponent(M4)
-    system.AddComponent(image)
+    if(cf.image_loc == 0):
+        image.Place(X=cf.image_foil['X'], angles=cf.image_foil['angles'], yrot = cf.image_foil['yrot'])
+        system.AddComponent(image)
+    elif(cf.image_loc == 1):
+        image.Place(X=cf.image_m1['X'], angles=cf.image_m1['angles'], yrot = cf.image_m1['yrot'])
+        system.AddComponent(M1)
+        system.AddComponent(image)
+    elif(cf.image_loc == 2):
+        image.Place(X=cf.image_m2f['X'], angles=cf.image_m2f['angles'], yrot = cf.image_m2f['yrot'])
+        system.AddComponent(M1)
+        system.AddComponent(M2)
+        system.AddComponent(image)
+    elif(cf.image_loc == 3):
+        image.Place(X=cf.image_m3['X'], angles=cf.image_m3['angles'], yrot = cf.image_m3['yrot'])
+        system.AddComponent(M1)
+        system.AddComponent(M2)
+        system.AddComponent(M3)
+        system.AddComponent(image)
+    elif(cf.image_loc == 4):
+        image.Place(X=cf.image_m4f['X'], angles=cf.image_m4f['angles'], yrot=cf.image_m4f['yrot'])
+        system.AddComponent(M1)
+        system.AddComponent(M2)
+        system.AddComponent(M3)
+        system.AddComponent(M4)
+        system.AddComponent(image)
+    else:
+        image.Place(X=cf.camera['X'], angles=cf.camera['angles'], yrot = cf.camera['yrot'])
+        system.AddComponent(M1)
+        system.AddComponent(M2)
+        system.AddComponent(M3)
+        system.AddComponent(M4)
+        system.AddComponent(image)
 
     return system

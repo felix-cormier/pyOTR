@@ -1,3 +1,5 @@
+import importlib
+importlib.invalidate_caches()
 import concurrent.futures
 import numpy as np
 import Config as cf

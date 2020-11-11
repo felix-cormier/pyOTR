@@ -48,7 +48,10 @@ class PerfectReflector(Reflector):
         X = X + V * t
         assert (np.abs(X[:, 1] - Xy) < eps).all()
         # Only keep rays that cross the (currently circular) reflector:
-        keep = np.diag(X.dot(X.T)) < (self.R**2)
+        # keep = np.diag(X.dot(X.T)) < (self.R**2)
+        keepX = np.abs(X[:,0]) < 55
+        keepZ = np.abs(X[:,2]) < 25
+        keep = keepX & keepZ
         X = X[keep]
         V = V[keep]
         assert X.shape == V.shape

@@ -33,13 +33,14 @@ if __name__ == '__main__':
     cf.GetTime()
     # Get details about the beam:
     #beam = Beam.Beam()
-   # laser = Laser.Laser(rad=0.1, nrays=10_000)
-   # laser.Place(-1062.438, 855.654, 0., np.array([0.,0.,cf.Conv(51.066)]))
+    #laser = Laser.Laser(rad=60., nrays=1_000_000)
+    #laser.Place(-1128.875, 735.489, 0., np.array([0.,0.,cf.Conv(50.813)]))
+    #laser.Place(-100., 0., 0., np.array([0.,0.,0.]))
     
-    filament = Filament.Filament(factor=0.5, nrays = 1_000_000)
-    filament.Place(-1062.438, 855.654, 0., np.array([0.,0.,cf.Conv(51.066)]))
-   # filament.Place(0., 0., 0., np.array([0.,0.,0.]))
-    
+    filament = Filament.Filament(nrays = 1_000_000)
+    filament.Place(-1128.875, 735.489, 0., np.array([0.,0.,cf.Conv(50.813)]))
+    #filament.Place(-100., 0., 0., np.array([0.,0.,0.]))
+
     if(cf.source == 'protons'):
         X, V = beam.GenerateBeam()
     elif(cf.source == 'filament'):
