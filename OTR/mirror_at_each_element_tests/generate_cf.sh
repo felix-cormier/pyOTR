@@ -1,7 +1,7 @@
 #!/bin/bash
 for i in 1 2 3
 do
-	for j in 0 4 #can change to accomodate any trace set
+	for j in 4 #can change to accomodate any trace set
 	do
 		echo "inputs = 'data/f$i""_{}.npy'" > Config2.py
 		echo "name = 'mirror_at_each_element_tests/trace_through_system/files_npy/f$i""_$j'" >> Config2.py
