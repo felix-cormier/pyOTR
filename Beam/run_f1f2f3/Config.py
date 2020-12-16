@@ -10,8 +10,7 @@ def Conv(deg):
 VERBOSE = 1  # Set to 1 for debugging info
 
 save = True
-name = 'output/filament'
-#name = '../OTR/data/fil_gen'  # name prefix used to create all outputs
+name = '../Beam/output/laser'
 logfile = name + '.log'  # log output will be directed to this file and to screen
 
 nrays = 1_000_000
@@ -32,15 +31,20 @@ beam = {
     'vcov': np.diag([0.05, 0.05, 1.]),  # not yet used, vz needs to be constrained by vx/vy
 
 }
-
+laser = {
+    'X': np.array([-1128.875, 735.489, 50.]),
+    'angles': np.array([0.,0.,0.])
+}
 filament = {
+        'X': np.array([-1128.875, 735.489, 50.]),
+        'angles': np.array([0.,0.,0.]),
         'Vtype': 'divergent',
-        'wire': False,
-        'reflector': True,
+        'wire': True,
+        'reflector': False,
         'spread': 0.01,
-        'F1': True, #true for on, false for off
-        'F2': False,
-        'F3': False
+	'F1' : False,
+	'F2' : False,
+	'F3' : True
 }
 
 background = {
@@ -81,9 +85,12 @@ plane = {
 reflector = {
     'normal': np.array([[0., 1., 0.]]),
     'R': 1000.,
+    #'X': np.array([0.,0.,0.]),
     'X': np.array([-529.309,0.,0.]),
+    #'angles': np.array([Conv(90), 0., 0.]),
     #'angles': np.array([0., 0., Conv(70.18)]), #x=oriented
-    'angles': np.array([Conv(-50.813/2.), Conv(0.1), 0.]),
+    #'angles': np.array([Conv(-50.813/2.), Conv(3.015), Conv(0.)]), #no offset
+    'angles': np.array([Conv(-50.9/2.), Conv(3.515), Conv(-0.04)]),
     'yrot': False,
     'name': 'PerfectReflector'
 }

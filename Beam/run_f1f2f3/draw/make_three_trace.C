@@ -46,17 +46,17 @@ void draw_foil(){
 	//Load files
 	TFile* f = new TFile("f1f2f3.root");
 	TH2F* h1 = (TH2F*)f->FindObjectAny(Form("h1"));
-	h1->SetTitle("F1 - Global Coordinates");
+	h1->SetTitle("F1 - Image Plane at Foil");
 	h1->GetXaxis()->SetTitle("z (mm)");
 	h1->GetYaxis()->SetTitle("x (mm)");
 	TH2F* h2 = (TH2F*)f->FindObjectAny(Form("h2"));
 	h2->GetXaxis()->SetTitle("z (mm)");
 	h2->GetYaxis()->SetTitle("x (mm)");
-	h2->SetTitle("F2 - Global Coordinates");
+	h2->SetTitle("F2 - Image Plane at Foil");
 	TH2F* h3 = (TH2F*)f->FindObjectAny(Form("h3"));
 	h3->GetXaxis()->SetTitle("z (mm)");
 	h3->GetYaxis()->SetTitle("x (mm)");
-	h3->SetTitle("F3 - Global Coordinates");
+	h3->SetTitle("F3 - Image Plane at Foil");
    	
 	float dx = 6.557;
    	float dy = 4.;
@@ -80,19 +80,19 @@ void draw_foil(){
         	holes[i]->Draw();
    	}
 	
-	c->cd(3);
+	c->cd(2);
 	h1->Draw("COLZ");
 	region->Draw();
    	for(int i = 0; i<12; i++){
         	holes[i]->Draw();
    	}
-	c->cd(1);
+	c->cd(4);
 	h2->Draw("COLZ");
 	region->Draw();
    	for(int i = 0; i<12; i++){
         	holes[i]->Draw();
    	}
-	c->cd(2);
+	c->cd(3);
 	h3->Draw("COLZ");
 	region->Draw();
    	for(int i = 0; i<12; i++){

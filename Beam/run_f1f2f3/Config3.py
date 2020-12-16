@@ -4,6 +4,10 @@ nrays = 1_000_000
 chunck = 1_000  # 0 if no division is to be made
 source = 'filament_v2' #backlight (filament/filament_v2), proton beam (protons), or laser (laser)
 
+pm = {
+    'psi': np.array([0.,0.,-50.])        
+}
+
 beam = {
     #'x': -1000., #for filament backlight
     'x': 0.,
@@ -19,7 +23,16 @@ beam = {
 
 }
 
+laser = {
+    'X': np.array([-1128.875 + pm['psi'][0], 735.489 + pm['psi'][1], pm['psi'][2]]),
+    #'X': np.array([-1128.875, 735.489, 0.]),
+    'angles': np.array([0.,0.,Conv(50.813)])
+}
+
 filament = {
+        'X': np.array([-1128.875 + pm['psi'][0], 735.489 + pm['psi'][1], pm['psi'][2]]),
+        #'X': np.array([-1128.875, 735.489, 0.]),
+        'angles': np.array([0.,0.,Conv(50.813)]),
         'Vtype': 'divergent',
         'wire': True,
         'reflector': False,

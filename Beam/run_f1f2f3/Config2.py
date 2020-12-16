@@ -1,1 +1,2 @@
-name = 'run_f1f2f3/sim_output/f3'
+name = '../OTR/data/f3'
+pm_name = '../OTR/mirror_at_each_element_tests/trace_through_system/files_npy/f_shift'

@@ -17,5 +17,5 @@ for i in range (1,4):
         x = X[j][0]
         y = X[j][1]
         z = X[j][2]
-        finalX.Fill(y,x)
+        finalX.Fill(x,y)
     finalX.Write()

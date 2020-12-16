@@ -10,12 +10,17 @@ def Conv(deg):
 VERBOSE = 1  # Set to 1 for debugging info
 
 save = True
-name = 'run_f1f2f3/sim_output/f3'
+name = '../OTR/data/f3'
+pm_name = '../OTR/mirror_at_each_element_tests/trace_through_system/files_npy/f_shift'
 logfile = name + '.log'  # log output will be directed to this file and to screen
 
 nrays = 1_000_000
 chunck = 1_000  # 0 if no division is to be made
 source = 'filament_v2' #backlight (filament/filament_v2), proton beam (protons), or laser (laser)
+
+pm = {
+    'psi': np.array([0.,0.,-50.])        
+}
 
 beam = {
     #'x': -1000., #for filament backlight
@@ -32,7 +37,16 @@ beam = {
 
 }
 
+laser = {
+    'X': np.array([-1128.875 + pm['psi'][0], 735.489 + pm['psi'][1], pm['psi'][2]]),
+    #'X': np.array([-1128.875, 735.489, 0.]),
+    'angles': np.array([0.,0.,Conv(50.813)])
+}
+
 filament = {
+        'X': np.array([-1128.875 + pm['psi'][0], 735.489 + pm['psi'][1], pm['psi'][2]]),
+        #'X': np.array([-1128.875, 735.489, 0.]),
+        'angles': np.array([0.,0.,Conv(50.813)]),
         'Vtype': 'divergent',
         'wire': True,
         'reflector': False,
@@ -81,10 +95,14 @@ reflector = {
     'normal': np.array([[0., 1., 0.]]),
     'R': 1000.,
     'X': np.array([-529.309,0.,0.]),
-    #'angles': np.array([0., 0., Conv(70.18)]), #x=oriented
-    'angles': np.array([Conv(-50.813/2.), Conv(0.), 0.]),
+    'Xl': np.array([-529.309,0.,2.]), #Where on reflector laser should land
+    'Xf': np.array([0.,0.,0.]), #Where on foil laser should land
+    #'angles': np.array([Conv(-50.813/2.), Conv(0.), Conv(0.)]), #no offset
+    #'angles': np.array([Conv(-50.9/2.), Conv(3.511), Conv(-0.04)]),
+    #'angles': np.array([Conv(-50.9/2.), Conv(-3.), Conv(-0.04)]),
+    'angles': np.array([Conv(-51.5/2.), Conv(6.99), Conv(0.015)]),
     'yrot': False,
-    'name': 'PerfectReflector'
+    'name': 'ConnectedReflector'
 }
 
 foils = {
