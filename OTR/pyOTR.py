@@ -1,8 +1,8 @@
 import concurrent.futures
 import numpy as np
-import Config as cf
-import Geometry
-#from PrepareData import PrepareData
+import Modules.Config as cf
+import Modules.Geometry as Geometry
+from include.PrepareData import PrepareData
 
 
 @cf.timer
@@ -10,7 +10,9 @@ def SimulateOTR(X, V, system):
 
     with concurrent.futures.ProcessPoolExecutor() as executor:
         results = executor.map(system.TraceRays, X, V)
+        print("pass")
         for i, result in enumerate(results):
+            print(i)
             if i % 100 == 0:
                 cf.logger.debug(f'Running data piece: {i}')
             x, v = result
@@ -30,10 +32,19 @@ def SimulateOTR(X, V, system):
 if __name__ == '__main__':
 
     cf.GetTime()
-
+    N = 10
     # Get details about the beam:
-    X = np.load(cf.inputs.format('X'))
-    V =	np.load(cf.inputs.format('V'))
+    #X = np.load(cf.inputs.format('X'))
+    #V =	np.load(cf.inputs.format('V'))
+    theta = np.random.uniform(0,2*np.pi,N)
+    r = np.random.uniform(0,2,N)
+    x = r*np.cos(theta)
+    y = r*np.sin(theta)
+    zero = np.zeros(N)
+    one = np.ones(N)
+    X = np.transpose(np.array([x,y,zero]))
+    V = np.transpose(np.array([-1*one,zero,zero]))
+
 
     if cf.chunck > 0:
         X, V = PrepareData(X, V, chunck=cf.chunck)

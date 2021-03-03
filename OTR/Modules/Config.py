@@ -110,22 +110,22 @@ camera = {
     'focal distance': 60.,
     'R': 10_000.,
     'name': 'ImagePlane',
-    
+
     #At foil
     #'X': np.array([[0., 0., 0.]]),
     #Angles for pointed at bg dist
   #  'angles': np.array([Conv(90), Conv(90), Conv(90)]),
     #Angles for pointed at beam
     #'angles': np.array([0., 0., 0.]),
-    
+
     #At M1
     'X': np.array([[1100., 0., 0.]]),
     'angles': np.array([Conv(90), Conv(90), Conv(90)]),
-    
+
     #For background
     #'X': np.array([[20., 0., 0.]]),#produced odd results
     #'angles': np.array([Conv(90), Conv(90), Conv(90)]),
-    
+
     #camera at M2 position
     #'X': np.array([[1100., 3850., 0.]]),
     #'angles': np.array([0., Conv(90), 0.])
@@ -164,7 +164,7 @@ def GetTime(start=True):
     logger.info(message)
 
 
-# Decorator to measure the time each function takes to run:
+#Decorator to measure the time each function takes to run:
 def timer(func):
     def wrapper(*args, **kwargs):
         t0 = time.time()

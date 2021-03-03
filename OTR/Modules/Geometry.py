@@ -1,7 +1,7 @@
-import Config as cf
-import Mirror
-import ImagePlane
-import OpticalSystem
+import Modules.Config as cf
+import Modules.Mirror as Mirror
+import include.ImagePlane as ImagePlane
+import include.OpticalSystem as OpticalSystem
 import numpy as np
 
 
