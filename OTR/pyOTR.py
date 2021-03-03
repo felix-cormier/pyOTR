@@ -2,7 +2,7 @@ import concurrent.futures
 import numpy as np
 import Config as cf
 import Geometry
-from PrepareData import PrepareData
+#from PrepareData import PrepareData
 
 
 @cf.timer
@@ -37,7 +37,7 @@ if __name__ == '__main__':
 
     if cf.chunck > 0:
         X, V = PrepareData(X, V, chunck=cf.chunck)
-    
+
     # Get the optical components to be simulated:
     system = Geometry.GetGeometry()
 
