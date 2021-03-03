@@ -4,18 +4,15 @@ import Modules.Config as cf
 import Modules.Geometry as Geometry
 from include.PrepareData import PrepareData
 
-
 @cf.timer
 def SimulateOTR(X, V, system):
-
     with concurrent.futures.ProcessPoolExecutor() as executor:
         results = executor.map(system.TraceRays, X, V)
         for i, result in enumerate(results):
-
+            #print(result)
             if i % 100 == 0:
                 cf.logger.debug(f'Running data piece: {i}')
             x, v = result
-            print(result)
             assert x.shape == v.shape
             if i == 0:
                 Xf = np.array(x)
@@ -48,13 +45,13 @@ if __name__ == '__main__':
 
     if cf.chunck > 0:
         X, V = PrepareData(X, V, chunck=cf.chunck)
-        # print(X)
+    #print(X)
     # Get the optical components to be simulated:
     system = Geometry.GetGeometry()
 
     # Run simulation:
     X, V = SimulateOTR(X, V, system)
-
+    #print(X)
     if cf.save:
         np.save(f'{cf.name}_Xfinal', X)
         np.save(f'{cf.name}_Vfinal', V)
