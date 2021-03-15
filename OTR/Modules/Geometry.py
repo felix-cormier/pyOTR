@@ -36,7 +36,7 @@ def GetGeometry():
     #system.AddComponent(M1)
     #system.AddComponent(M2)
     #system.AddComponent(M3)
-    #system.AddComponent(M4)
+    # system.AddComponent(M4)
     system.AddComponent(image)
 
     return system

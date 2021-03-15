@@ -14,7 +14,8 @@ class ImagePlane(OpticalComponent):
         V = self.transform_coord.TransfrmVec(V)
         # Get the interaction points X and the V reflected:
         X, V = self.PlaneIntersect(X, V)
-        # Here we actually do not transform back to Global Coords, since it makes more sense to plot things
+        # Here we actually do not transform back to Global Coords,
+        # since it makes more sense to plot things
         # with respect to the Image Plane.
         return X, V
 

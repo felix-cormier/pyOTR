@@ -25,7 +25,7 @@ light = {
     4: 'Laser'
 }
 
-light_source = 0
+light_source = 4
 
 foils = {
     0: 'Blank',
@@ -111,15 +111,15 @@ camera = {
     'R': 10_000.,
     'name': 'ImagePlane',
 
-    #At foil
-    #'X': np.array([[0., 0., 0.]]),
-    #Angles for pointed at bg dist
-  #  'angles': np.array([Conv(90), Conv(90), Conv(90)]),
-    #Angles for pointed at beam
-    #'angles': np.array([0., 0., 0.]),
+   #  At foil
+   #  'X': np.array([[0., 0., 0.]]),
+   #  Angles for pointed at bg dist
+   # 'angles': np.array([Conv(90), Conv(90), Conv(90)]),
+   #  Angles for pointed at beam
+   #  'angles': np.array([0., 0., 0.]),
 
     #At M1
-    'X': np.array([[1100., 0., 0.]]),
+    'X': np.array([[1100, 0., 0.]]),
     'angles': np.array([Conv(90), Conv(90), Conv(90)]),
 
     #For background
@@ -142,6 +142,45 @@ camera = {
     #'X': np.array([[-1100. + 2*M4['f'], 6522., 0.]]),
     #'angles': np.array([Conv(90), Conv(90), 0.])
 }
+
+# camera = {
+#     'npxlX': 484,
+#     'npxlY': 484,
+#     'focal distance': 60.,
+#     'R': 10_000.,
+#     'name': 'ImagePlane',
+#
+#    #  At foil
+#    #  'X': np.array([[0., 0., 0.]]),
+#    #  Angles for pointed at bg dist
+#    # 'angles': np.array([Conv(90), Conv(90), Conv(90)]),
+#    #  Angles for pointed at beam
+#    #  'angles': np.array([0., 0., 0.]),
+#
+#     #At M1
+#     'X': np.array([[1100, 0., 0.]]),
+#     'angles': np.array([Conv(90), Conv(95), Conv(95)]),
+#
+#     #For background
+#     #'X': np.array([[20., 0., 0.]]),#produced odd results
+#     #'angles': np.array([Conv(90), Conv(90), Conv(90)]),
+#
+#     #camera at M2 position
+#     #'X': np.array([[1100., 3850., 0.]]),
+#     #'angles': np.array([0., Conv(90), 0.])
+#
+#     #camera at M3 position
+#     #'X': np.array([[-1100., 3850., 0.]]),
+#     #'angles': np.array([Conv(90), Conv(90), 0.])
+#
+#     #camera at M4 position
+#     #'X': np.array([[-1100., 6522., 0.]]),
+#     #'angles': np.array([0., Conv(90), 0.])
+#
+#     #camera at M4 focal point
+#     #'X': np.array([[-1100. + 2*M4['f'], 6522., 0.]]),
+#     #'angles': np.array([Conv(90), Conv(90), 0.])
+# }
 
 level = logging.DEBUG if VERBOSE else logging.INFO
 message = '%(message)s\n'
