@@ -51,9 +51,17 @@ M0 = {
     'normal': np.array([[0., 0., -1.]]),
     'R': 100.,
     'X': np.zeros((1, 3)),
-    'angles': np.array([0., Conv(45), 0.]),
+    'angles': np.array([0., Conv(90), 0.]),
     'yrot': True,
     'name': 'PlaneMirror'
+}
+
+Md = {
+    'R': 100.,
+    'X': np.zeros((1, 3)),
+    'angles': np.array([0., Conv(45), 0.]),
+    'yrot': True,
+    'name': 'DiffMirror'
 }
 
 M1 = {
@@ -119,68 +127,33 @@ camera = {
    #  'angles': np.array([0., 0., 0.]),
 
     #At M1
-    'X': np.array([[1100, 0., 0.]]),
-    'angles': np.array([Conv(90), Conv(90), Conv(90)]),
+    # 'X': np.array([[1100., 0., 0.]]),
+    # 'angles': np.array([Conv(90),Conv(90),Conv(-90)]),   # x z'x''
 
     #For background
-    #'X': np.array([[20., 0., 0.]]),#produced odd results
-    #'angles': np.array([Conv(90), Conv(90), Conv(90)]),
+    # 'X': np.array([[20., 0., 0.]]),#produced odd results
+    # 'angles': np.array([Conv(90), Conv(90), Conv(90)]),
 
     #camera at M2 position
-    #'X': np.array([[1100., 3850., 0.]]),
-    #'angles': np.array([0., Conv(90), 0.])
+    # 'X': np.array([[1100., 3850., 0.]]),
+    # 'angles': np.array([Conv(0), Conv(90), Conv(90)]),  # y -x' y''
+
+    #camera at M2 focal point
+    # 'X': np.array([[-1100. + 2*M3['f'], 3850., 0.]]),
+    # 'angles': np.array([Conv(90), Conv(-90), Conv(-90)])  # -x -z' -x''
 
     #camera at M3 position
-    #'X': np.array([[-1100., 3850., 0.]]),
-    #'angles': np.array([Conv(90), Conv(90), 0.])
+    # 'X': np.array([[-1100., 3850., 0.]]),
+    # 'angles': np.array([Conv(90), Conv(-90), Conv(-90)])  # -x -z' -x''
 
     #camera at M4 position
-    #'X': np.array([[-1100., 6522., 0.]]),
-    #'angles': np.array([0., Conv(90), 0.])
+    # 'X': np.array([[-1100., 6522., 0.]]),
+    # 'angles': np.array([Conv(0), Conv(90), Conv(90)])  # y -x' y''
 
-    #camera at M4 focal point
-    #'X': np.array([[-1100. + 2*M4['f'], 6522., 0.]]),
-    #'angles': np.array([Conv(90), Conv(90), 0.])
+    # camera at M4 focal point
+    'X': np.array([[-1100. + 2*M4['f'], 6522., 0.]]),
+    'angles': np.array([Conv(90), Conv(90), Conv(-90)])  # x z'x''
 }
-
-# camera = {
-#     'npxlX': 484,
-#     'npxlY': 484,
-#     'focal distance': 60.,
-#     'R': 10_000.,
-#     'name': 'ImagePlane',
-#
-#    #  At foil
-#    #  'X': np.array([[0., 0., 0.]]),
-#    #  Angles for pointed at bg dist
-#    # 'angles': np.array([Conv(90), Conv(90), Conv(90)]),
-#    #  Angles for pointed at beam
-#    #  'angles': np.array([0., 0., 0.]),
-#
-#     #At M1
-#     'X': np.array([[1100, 0., 0.]]),
-#     'angles': np.array([Conv(90), Conv(95), Conv(95)]),
-#
-#     #For background
-#     #'X': np.array([[20., 0., 0.]]),#produced odd results
-#     #'angles': np.array([Conv(90), Conv(90), Conv(90)]),
-#
-#     #camera at M2 position
-#     #'X': np.array([[1100., 3850., 0.]]),
-#     #'angles': np.array([0., Conv(90), 0.])
-#
-#     #camera at M3 position
-#     #'X': np.array([[-1100., 3850., 0.]]),
-#     #'angles': np.array([Conv(90), Conv(90), 0.])
-#
-#     #camera at M4 position
-#     #'X': np.array([[-1100., 6522., 0.]]),
-#     #'angles': np.array([0., Conv(90), 0.])
-#
-#     #camera at M4 focal point
-#     #'X': np.array([[-1100. + 2*M4['f'], 6522., 0.]]),
-#     #'angles': np.array([Conv(90), Conv(90), 0.])
-# }
 
 level = logging.DEBUG if VERBOSE else logging.INFO
 message = '%(message)s\n'

@@ -10,6 +10,8 @@ def GetGeometry():
     M0 = Mirror.PlaneMirror(
         normal=cf.M0['normal'], R=cf.M0['R'], name=cf.M0['name'])
 
+    Md = Mirror.DiffMirror(R=cf.Md['R'], name=cf.Md['name'])
+
     M1 = Mirror.ParaMirror(f=cf.M1['f'], H=cf.M1['H'], D=cf.M1['D'],
                            rough=cf.M1['rough'], name=cf.M1['name'])
 
@@ -25,6 +27,7 @@ def GetGeometry():
     image = ImagePlane.ImagePlane(R=cf.camera['R'], name=cf.camera['name'])
 
     M0.Place(X=cf.M0['X'], angles=cf.M0['angles'], yrot=cf.M0['yrot'])
+    Md.Place(X=cf.Md['X'], angles=cf.Md['angles'], yrot=cf.Md['yrot'])
     M1.Place(X=cf.M1['X'], angles=cf.M1['angles'])
     M2.Place(X=cf.M2['X'], angles=cf.M2['angles'])
     M3.Place(X=cf.M3['X'], angles=cf.M3['angles'])
@@ -32,11 +35,17 @@ def GetGeometry():
     image.Place(X=cf.camera['X'], angles=cf.camera['angles'])
 
     system = OpticalSystem.OpticalSystem()
-    #system.AddComponent(M0)
-    #system.AddComponent(M1)
-    #system.AddComponent(M2)
-    #system.AddComponent(M3)
-    # system.AddComponent(M4)
+    system.AddComponent(M4)
+    system.AddComponent(M3)
+    system.AddComponent(M2)
+    system.AddComponent(M1)
+    system.AddComponent(M0)
+    # system.AddComponent(Md)
+
+    system.AddComponent(M1)
+    system.AddComponent(M2)
+    system.AddComponent(M3)
+    system.AddComponent(M4)
     system.AddComponent(image)
 
     return system

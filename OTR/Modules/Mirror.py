@@ -63,6 +63,59 @@ class PlaneMirror(Mirror):
         assert X.shape == V.shape
         return X, V
 
+class DiffMirror(Mirror):
+    def __init__(self, R=20., name='DiffMirror'):
+        Mirror.__init__(self, name=name)
+        self.R = R
+
+    def GetNormal(self,V):
+        n=len(V)
+        u = np.random.uniform(0,1,n)
+        v = np.random.uniform(0,1,n)
+        theta = 2*np.pi*u
+        phi = 0.5*np.arccos(2*v-1)
+
+        x = np.sin(phi)*np.cos(theta)
+        y = np.sin(phi)*np.sin(theta)
+        z = np.cos(phi)
+        normal = np.array([x,y,z])
+        return normal.T
+
+    def PlaneReflect(self, V):
+        self.normal = self.GetNormal(V)
+        return np.array([V[i] - 2 * V[i].dot(self.normal[i].T) * self.normal[i] for i in range(len(V))])
+
+    def PlaneIntersect(self, X, V):
+        z = X[:, 2]     # selects the z component of all rays
+        Vz = V[:, 2]    # selects the Vz component of all rays
+        eps = 10e-5  # tolerance
+        Z = 0.       # Position of Mirror Plane in Mirror Reference System
+        AtPlane = np.abs(z - Z) > eps
+        HasV = np.abs(Vz) > eps
+        GoodRays = np.logical_and(AtPlane, HasV)
+        z = z[GoodRays]
+        Vz = Vz[GoodRays]
+        X = X[GoodRays]
+        V = V[GoodRays]
+        # Only keep rays that are pointing at the mirror:
+        ToPlane = Vz / np.abs(Vz) != (z - Z) / np.abs(z - Z)
+        z = z[ToPlane]
+        Vz = Vz[ToPlane]
+        X = X[ToPlane]
+        V = V[ToPlane]
+        # interaction at z = 0, by construction:
+        t = (Z - z) / Vz
+        assert (t > 0).all()
+        t.resize(t.shape[0], 1)
+        # Propagate the rays to the interaction point:
+        X = X + V * t
+        assert (np.abs(X[:, 2] - Z) < eps).all()
+        # Only keep rays that cross the Spherical Mirror:
+        keep = np.diag(X.dot(X.T)) < (self.R**2)
+        X = X[keep]
+        V = V[keep]
+        assert X.shape == V.shape
+        return X, V
 
 class ParaMirror(Mirror):
     def __init__(self, f=550., H=120., D=120., rough=False, name=None):
