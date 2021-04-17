@@ -70,19 +70,32 @@ class DiffMirror(Mirror):
 
     def GetNormal(self,V):
         n=len(V)
-        u = np.random.uniform(0,1,n)
-        v = np.random.uniform(0,1,n)
+        # Whole angle spectra
+        # u = np.random.uniform(0,1,n)
+        # v = np.random.uniform(0,1,n)
+        # Majority angle spectra
+        m = int(n/2)
+        u = np.hstack((np.random.uniform(0,0.04,m), np.random.uniform(6.24/(2*np.pi),1,n-m)))
+        v = np.random.uniform(0.527,0.472,n)  # 0,758,0.813
+        # Generate angles
         theta = 2*np.pi*u
         phi = 0.5*np.arccos(2*v-1)
-
         x = np.sin(phi)*np.cos(theta)
         y = np.sin(phi)*np.sin(theta)
         z = np.cos(phi)
         normal = np.array([x,y,z])
+        #Save angles
+        # with open('output/phi.txt', 'a') as f1:
+        #     for item in phi:
+        #         f1.write("%.3f "%(item))
+        #     f1.write("\n")
+        # with open('output/theta.txt', 'a') as f1:
+        #     for item in theta:
+        #         f1.write("%.3f "%(item))
+        #     f1.write("\n")
         return normal.T
 
     def PlaneReflect(self, V):
-        self.normal = self.GetNormal(V)
         return np.array([V[i] - 2 * V[i].dot(self.normal[i].T) * self.normal[i] for i in range(len(V))])
 
     def PlaneIntersect(self, X, V):
@@ -114,6 +127,7 @@ class DiffMirror(Mirror):
         keep = np.diag(X.dot(X.T)) < (self.R**2)
         X = X[keep]
         V = V[keep]
+        self.normal = self.GetNormal(V)
         assert X.shape == V.shape
         return X, V
 
@@ -128,6 +142,7 @@ class ParaMirror(Mirror):
         self.shift = np.array([[2. * self.f, self.f, 0]])
         self.acc = 1.e-3
         self.niter = 100
+        self.name=name
 
     def GetIncrement(self, t, X, V):
         Xr = X + self.shift + (V * t)
@@ -154,7 +169,6 @@ class ParaMirror(Mirror):
         return V - 2 * np.diag(V.dot(self.normal.T)).reshape(V.shape[0], 1) * self.normal
 
     def PlaneIntersect(self, X, V):
-        # Initial guess:
         X0 = X
         V0 = V
         t = np.fabs(X0[:, 0]).reshape(X0.shape[0], 1)
@@ -169,8 +183,9 @@ class ParaMirror(Mirror):
             V0 = V0[mask]
             t = t - (f / fprime).reshape(f.shape[0], 1)
             i += 1
+
             if i > self.niter:
-                print(f'Failure to converge in {self.niter} iterations')
+                # print(f'Failure to converge in {self.niter} iterations')
                 break
         # intersection Point:
         X0 = X0 + (V0 * t)
@@ -180,5 +195,13 @@ class ParaMirror(Mirror):
         keep = np.logical_and(vertical, circle)
         X0 = X0[keep]
         V0 = V0[keep]
+        # Save masks for light rays hitting M1
+        # if not all(keep):
+        #     if self.name == 'ParaMirror1':
+        #         with open('output/boo_M1.txt','a') as f:
+        #             for item in keep:
+        #                 f.write("%d "%(int(item)))
+        #             f.write("\n")
+
         self.normal = self.GetNormal(X0)
         return X0, V0
