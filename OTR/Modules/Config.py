@@ -25,7 +25,19 @@ light = {
     4: 'Laser'
 }
 
-light_source = 4
+light_source = 1
+
+background = {
+    'length':25.,
+    'cfoil':1, #0,1,2 -> normal, cross, diamond
+    #'spread':0.0,
+    #'spread':0.025,
+    'spread':0.075,
+    #'spread':0.001,
+    'style': 'cross',#cross or square
+    'Vtype': 'divergent'  #parallel or divergent
+    #potentially add cross parameter
+}
 
 foils = {
     0: 'Blank',
@@ -127,8 +139,9 @@ camera = {
    #  'angles': np.array([0., 0., 0.]),
 
     #At M1
-    # 'X': np.array([[1100., 0., 0.]]),
-    # 'angles': np.array([Conv(90),Conv(90),Conv(-90)]),   # x z'x''
+    'X': np.array([[1100., 0., 0.]]),
+    'angles': np.array([Conv(90),Conv(90),Conv(-90)]),   # x z'x''
+    # 'angles': np.array([Conv(90),Conv(-90),Conv(-90)]),   # x -z'x''
 
     #For background
     # 'X': np.array([[20., 0., 0.]]),#produced odd results
@@ -136,23 +149,51 @@ camera = {
 
     #camera at M2 position
     # 'X': np.array([[1100., 3850., 0.]]),
-    # 'angles': np.array([Conv(0), Conv(90), Conv(90)]),  # y -x' y''
+    # 'angles': np.array([Conv(0), Conv(90), Conv(0)]),  # y -x' y''
+
 
     #camera at M2 focal point
-    # 'X': np.array([[-1100. + 2*M3['f'], 3850., 0.]]),
-    # 'angles': np.array([Conv(90), Conv(-90), Conv(-90)])  # -x -z' -x''
+    'X': np.array([[-1100. + 3*M3['f'], 3850., 0.]]),
+    'angles': np.array([Conv(90), Conv(90), Conv(-90)])  # x -z' x''
 
     #camera at M3 position
     # 'X': np.array([[-1100., 3850., 0.]]),
-    # 'angles': np.array([Conv(90), Conv(-90), Conv(-90)])  # -x -z' -x''
+    # 'angles': np.array([Conv(90), Conv(90), Conv(-90)])  # x -z' x''
 
     #camera at M4 position
     # 'X': np.array([[-1100., 6522., 0.]]),
-    # 'angles': np.array([Conv(0), Conv(90), Conv(90)])  # y -x' y''
+    # 'angles': np.array([Conv(0), Conv(90), Conv(0)])  # y -x' y''
 
     # camera at M4 focal point
-    'X': np.array([[-1100. + 2*M4['f'], 6522., 0.]]),
-    'angles': np.array([Conv(90), Conv(90), Conv(-90)])  # x z'x''
+    # 'X': np.array([[-1100. + 2*M4['f'], 6522., 0.]]),
+    # 'angles': np.array([Conv(90), Conv(90), Conv(-90)])  # x z'x''
+
+
+
+
+    # camera at M4 position
+    # 'X': np.array([[-1100., 6522., 0.]]),
+    # 'angles': np.array([Conv(90), Conv(90), Conv(-90)])  # x -z' x''
+
+
+    #camera at M3 position
+    # 'X': np.array([[-1100., 3850., 0.]]),
+    # 'angles': np.array([Conv(0), Conv(90), Conv(0)]),  # -y x' -y''
+
+    # camera at M2 position
+    # 'X': np.array([[1100., 3850., 0.]]),
+    # 'angles': np.array([Conv(90), Conv(90), Conv(-90)])  # x z' x''
+    # 'angles': np.array([Conv(90), Conv(90), Conv(90)])  # x z' x''
+
+    #camera at M1 position
+    # 'X': np.array([[1100., 0., 0.]]),
+    # 'angles': np.array([Conv(0), Conv(90), Conv(0)]),  # -y x' -y''
+
+    #camera at original position
+    # 'X': np.array([[0., 0., 0.]]),
+    # 'angles': np.array([Conv(90), Conv(90), Conv(-90)])  # x -z' x''
+
+
 }
 
 level = logging.DEBUG if VERBOSE else logging.INFO

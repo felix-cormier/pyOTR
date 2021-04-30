@@ -5,6 +5,7 @@ from include.PrepareData import PrepareData
 import DataGen
 import Plotter
 import numpy as np
+# import Modules.Filament as Filament
 import matplotlib.pyplot as plt
 
 
@@ -36,15 +37,57 @@ if __name__ == '__main__':
     # X,V = DataGen.test_top()
     # X,V = DataGen.test_bottom()
     # X,V = DataGen.asy_patt_top()
-    # X,V = DataGen.asy_patt_bottom()
-    X,V = DataGen.MC_top()
+    X,V = DataGen.asy_patt_bottom()
+    # X,V = DataGen.MC_top()
     # X,V = DataGen.MC_bottom()
-    
+
     ### Plot the Generated Pattern ###
+    # file name
     Plotter.ring = 2
     Plotter.test = 6
-    h0 = Plotter.plot_gen_top(X)
-    # h0=Plotter.plot_gen_bottom(X)
+    size_gen=3
+    # h0 = Plotter.plot_gen_top(X)
+    h0=Plotter.plot_gen_bottom(X)
+
+
+
+    # Get details about the beam:
+    #beam = Beam.Beam()
+   # laser = Laser.Laser(rad=0.1, nrays=10_000)
+   # laser.Place(-1062.438, 855.654, 0., np.array([0.,0.,cf.Conv(51.066)]))
+
+   #  filament = Filament.Filament(factor=0.5, nrays = 1_000_000)
+   #  filament.Place(-1062.438, 855.654, 0., np.array([0.,0.,cf.Conv(51.066)]))
+   # # filament.Place(0., 0., 0., np.array([0.,0.,0.]))
+   #
+   #
+   #  if(cf.light[cf.light_source] == 'F1'):
+   #      start = time.time()
+   #     # X, V = beam.GenerateFilamentBacklight_v1()
+   #      X, V = beam.GenerateFilament()
+   #      end = time.time()
+   #      print(f"Filament backlight generation time: {end - start}")
+   #  # elif(cf.source == 'filament_v2'):
+   #  #     start = time.time()
+   #  #     X,V = filament.GenerateRays()
+   #  #     end = time.time()
+   #  #     print(f"Filament backlight generation time: {end - start}")
+   #  # elif(cf.source == 'laser'):
+   #  #     start = time.time()
+   #  #     X, V = laser.GenerateRays()
+   #  #     end = time.time()
+   #      #print(f"Filament backlight generation time: {end - start}")
+   #  else:
+   #      print('Not a valid source')
+   #
+   #  #Save initial distribution
+   #  if cf.save:
+   #      # if(cf.source == 'protons'):
+   #      #     np.save(f'{cf.name}_protonsX', X)
+   #      #     np.save(f'{cf.name}_protonsV', V)
+   #      if(cf.light[cf.light_source] == 'F1'):
+   #          np.save(f'{cf.name}_filamentX', X)
+   #          np.save(f'{cf.name}_filamentV', V)
 
     ### Start the simulation ###
     if cf.chunck > 0:
@@ -63,6 +106,7 @@ if __name__ == '__main__':
     cf.GetTime(start=False)
 
     ### Plot the Observed Pattern ###
+    size_obs=3
     h = Plotter.plot_obs(X)
 
     ### Plot the Pattern Difference ###
