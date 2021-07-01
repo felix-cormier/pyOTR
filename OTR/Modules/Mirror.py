@@ -14,11 +14,20 @@ class Mirror(OpticalComponent):
         # Go to local coords:
         X = self.transform_coord.TransfrmPoint(X)
         V = self.transform_coord.TransfrmVec(V)
+
         # Get the interaction points X and the V reflected:
         X, V = self.PlaneTransport(X, V)
+
         # Transform back to the global coords:
         X = self.transform_coord.TransfrmPoint(X, inv=True)
         V = self.transform_coord.TransfrmVec(V, inv=True)
+
+        # Save the ray positions hitting the mirrors
+        # for i in range (500):
+        #     with open('output/ray%d.txt'%(i),'a') as f:
+        #         for item in X[i]:
+        #             f.write("%.7f "%(item))
+        #         f.write("\n")
         return X, V
 
 
@@ -73,10 +82,16 @@ class DiffMirror(Mirror):
         # Whole angle spectra
         # u = np.random.uniform(0,1,n)
         # v = np.random.uniform(0,1,n)
+
         # Majority angle spectra
-        m = int(n/2)
-        u = np.hstack((np.random.uniform(0,0.04,m), np.random.uniform(6.24/(2*np.pi),1,n-m)))
-        v = np.random.uniform(0.527,0.472,n)  # 0,758,0.813
+        dtheta=0.74
+        dphi=0.73
+        u = np.random.uniform(-dtheta/360,dtheta/360,n)
+        v = np.random.uniform(0.5*(np.cos((45+dphi)*np.pi/90)+1),0.5*(np.cos((45-dphi)*np.pi/90)+1),n)
+
+        # u = np.random.uniform(-0.04/(2*np.pi),0.04,n)
+        # v = np.random.uniform(0.527,0.472,n)  # 0,758,0.813
+
         # Generate angles
         theta = 2*np.pi*u
         phi = 0.5*np.arccos(2*v-1)
@@ -84,7 +99,7 @@ class DiffMirror(Mirror):
         y = np.sin(phi)*np.sin(theta)
         z = np.cos(phi)
         normal = np.array([x,y,z])
-        #Save angles
+        # Save angles
         # with open('output/phi.txt', 'a') as f1:
         #     for item in phi:
         #         f1.write("%.3f "%(item))

@@ -16,16 +16,45 @@ name = 'output/otr_sys'  # name prefix used to create all outputs
 logfile = name + '.log'  # log output will be directed to this file and to screen
 
 chunck = 1_000
+nrays = 1_000_000
 
-light = {
-    0: 'OTR',
-    1: 'F1',
-    2: 'F2',
-    3: 'F3',
-    4: 'Laser'
+# light = {
+#     0: 'OTR',
+#     1: 'F1',
+#     2: 'F2',
+#     3: 'F3',
+#     4: 'Laser'
+# }
+# light_source = 1
+
+
+filament = {
+        'Vtype': 'parallel',
+        # 'Vtype': 'divergent',
+        'spread': 0.02,
+        'F1': True, #true for on, false for off
+        'F2': False,
+        'F3': False
 }
 
-light_source = 1
+# source = 'filament_v2' #backlight (filament/filament_v2), proton beam (protons), or laser (laser)
+source = 'filament' #backlight (filament/filament_v2), proton beam (protons), or laser (laser)
+
+beam = {
+    'x': -1000., #for filament backlight
+    # 'x': 0.,
+    'y': 0.,
+    #'z': 0.,
+    'z': -100.,
+    #'gamma':21., #E = 20 GeV
+    'gamma':32., #E = 30 GeV
+#    'gamma':53.5, #E = 50 GeV
+    'cov': np.diag([9., 9., 0.]),
+    # 'Vtype': 'divergent',
+    'Vtype': 'parallel',  # 'divergent' need to implement divergent beam also
+    'vcov': np.diag([0.05, 0.05, 1.]),  # not yet used, vz needs to be constrained by vx/vy
+
+}
 
 background = {
     'length':25.,
@@ -52,7 +81,9 @@ foils = {
 
 foil = {
     'X': np.zeros((1, 3)),
-    'angles': np.array([0., Conv(90), Conv(45)]),
+    # 'angles': np.array([0., Conv(-90), Conv(45)]),  #diffuse_ring
+    # 'angles': np.array([0., Conv(90), Conv(90)]), #plane_ring
+    'angles': np.array([0., Conv(90), Conv(45)]), #original_filament
     'normal': np.array([[0, -1, 0]]),
     'D': 50.,
     'name': foils[3],
@@ -138,62 +169,55 @@ camera = {
    #  Angles for pointed at beam
    #  'angles': np.array([0., 0., 0.]),
 
-    #At M1
-    'X': np.array([[1100., 0., 0.]]),
-    'angles': np.array([Conv(90),Conv(90),Conv(-90)]),   # x z'x''
-    # 'angles': np.array([Conv(90),Conv(-90),Conv(-90)]),   # x -z'x''
+
+    # #At M1
+    # 'X': np.array([[1100., 0., 0.]]),
+    # 'angles': np.array([Conv(90),Conv(90),Conv(-90)]),   # -x -z'-x''
 
     #For background
     # 'X': np.array([[20., 0., 0.]]),#produced odd results
     # 'angles': np.array([Conv(90), Conv(90), Conv(90)]),
 
     #camera at M2 position
-    # 'X': np.array([[1100., 3850., 0.]]),
-    # 'angles': np.array([Conv(0), Conv(90), Conv(0)]),  # y -x' y''
+    # 'X': np.array([[1100., 3850, 0.]]),
+    # 'angles': np.array([Conv(0), Conv(-90), Conv(0)]),  # -y x' -y''
 
+    # camera at M2 focal point
+    # 'X': np.array([[-1100. +1.49*M3['f'], 3850., 0.]]),
+    # 'angles': np.array([Conv(90), Conv(-90), Conv(-90)])  # x z' x''
 
-    #camera at M2 focal point
-    'X': np.array([[-1100. + 3*M3['f'], 3850., 0.]]),
-    'angles': np.array([Conv(90), Conv(90), Conv(-90)])  # x -z' x''
-
-    #camera at M3 position
+    # camera at M3 position
     # 'X': np.array([[-1100., 3850., 0.]]),
-    # 'angles': np.array([Conv(90), Conv(90), Conv(-90)])  # x -z' x''
+    # 'angles': np.array([Conv(90), Conv(-90), Conv(-90)])  # x z' x''
 
-    #camera at M4 position
+    # camera at M4 position
     # 'X': np.array([[-1100., 6522., 0.]]),
-    # 'angles': np.array([Conv(0), Conv(90), Conv(0)])  # y -x' y''
+    # 'angles': np.array([Conv(0), Conv(-90), Conv(0)]),  # -y x' -y''
 
     # camera at M4 focal point
-    # 'X': np.array([[-1100. + 2*M4['f'], 6522., 0.]]),
-    # 'angles': np.array([Conv(90), Conv(90), Conv(-90)])  # x z'x''
-
-
+    'X': np.array([[-1100. + 2*M4['f'], 6522., 0.]]),
+    'angles': np.array([Conv(90), Conv(90), Conv(-90)])  # -x -z'-x''
 
 
     # camera at M4 position
     # 'X': np.array([[-1100., 6522., 0.]]),
-    # 'angles': np.array([Conv(90), Conv(90), Conv(-90)])  # x -z' x''
-
+    # 'angles': np.array([Conv(90), Conv(-90), Conv(-90)])  # x z' x''
 
     #camera at M3 position
     # 'X': np.array([[-1100., 3850., 0.]]),
-    # 'angles': np.array([Conv(0), Conv(90), Conv(0)]),  # -y x' -y''
+    # 'angles': np.array([Conv(0), Conv(90), Conv(0)]),  # y x' y''
 
     # camera at M2 position
     # 'X': np.array([[1100., 3850., 0.]]),
-    # 'angles': np.array([Conv(90), Conv(90), Conv(-90)])  # x z' x''
-    # 'angles': np.array([Conv(90), Conv(90), Conv(90)])  # x z' x''
+    # 'angles': np.array([Conv(90), Conv(90), Conv(-90)])  # -x -z' -x''
 
     #camera at M1 position
     # 'X': np.array([[1100., 0., 0.]]),
-    # 'angles': np.array([Conv(0), Conv(90), Conv(0)]),  # -y x' -y''
+    # 'angles': np.array([Conv(0), Conv(90), Conv(0)]),  # y x' y''
 
     #camera at original position
     # 'X': np.array([[0., 0., 0.]]),
-    # 'angles': np.array([Conv(90), Conv(90), Conv(-90)])  # x -z' x''
-
-
+    # 'angles': np.array([Conv(90), Conv(-90), Conv(-90)])  # x z' x''
 }
 
 level = logging.DEBUG if VERBOSE else logging.INFO

@@ -9,9 +9,9 @@ def point_on_triangle(pt1, pt2, pt3):
             s * pt1[1] + (t-s)*pt2[1] + (1-t)*pt3[1])
 
 #vertices' coordinates
-pt1 = (-0.3, 2.5)
-pt2 = (-0.7, 1.3)
-pt3 = (0.7, 1.3)
+pt1 = (-0.8, 2)
+pt2 = (-1.2, 0.8)
+pt3 = (0.2, 0.8)
 points = [point_on_triangle(pt1, pt2, pt3) for _ in range(1000)]
 x0, y0 = zip(*points)
 
@@ -30,13 +30,16 @@ def get_random_ellipse(n, x0, y0):
             nkeep += w.size
     return xout,yout
 
-x1,y1=get_random_ellipse(1000,0.7, 0.7)
+x1,y1=get_random_ellipse(1000,0.8, 0.7)
 
 ### rectangular pattern ###
-x2 = np.random.uniform(1.3,2.5,1000)
-y2 = np.random.uniform(1.3,2.5,1000)
+x2 = np.random.uniform(0.8,2,1000)
+y2 = np.random.uniform(0.8,2,1000)
 
 
 x=np.hstack((x0,x1,x2))
 y=np.hstack((y0,y1,y2))
 X=np.vstack((x,y))
+
+# plt.hist2d(x,y)
+# plt.show()
