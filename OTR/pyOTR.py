@@ -45,9 +45,19 @@ if __name__ == '__main__':
 
     # Run simulation:
     X, V = SimulateOTR(X, V, system)
-
+    print('end')
+    print(X[:1])
+    print(V[:1])
+    print(X.shape)
     if cf.save:
         np.save(f'{cf.name}_Xfinal', X)
         np.save(f'{cf.name}_Vfinal', V)
+        pms = open(cf.name + '_pm.txt', 'w')
+        pms.write("#theta = " + str(cf.pm['tht']) + "\n")
+        pms.write("#hat{#sigma} = " + str(cf.pm['sig']) + "\n")
+        pms.write("#hat{#epsilon} = " + str(cf.pm['eps']) + "\n")
+        beam_pm = open('mirror_at_each_element_tests/trace_through_system/files_npy/f_shift_pm.txt')
+        psi = (beam_pm.readlines())[0]
+        pms.write(psi + "\n")
 
     cf.GetTime(start=False)

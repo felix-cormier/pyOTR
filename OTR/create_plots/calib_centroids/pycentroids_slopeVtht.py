@@ -6,9 +6,9 @@ if root:
     #Create canvas
     c1 = TCanvas('c1', 'c1', 800, 800)
     c1.SetGrid(1,1)
-    outf = TFile('slopes.root', 'recreate')
+    outf = TFile('output/slopes.root', 'recreate')
     
-    slopes = 'F{}_slope.txt'
+    slopes = 'output/F{}_slope.txt'
     #Load and set graphs
     g1 = TGraph(slopes.format(1), '%lg %lg')
     g2 = TGraph(slopes.format(2), '%lg %lg')
@@ -32,7 +32,7 @@ if root:
     
     
     
-    c1.SaveAs('slopes.png')
+    c1.SaveAs('output/slopes.png')
     g1.SetName('g1')
     g1.Write()
     g2.SetName('g2')

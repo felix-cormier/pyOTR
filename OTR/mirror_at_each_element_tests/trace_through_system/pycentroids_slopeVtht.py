@@ -2,7 +2,7 @@ import numpy as np
 
 root = True
 if root:
-    from ROOT import TFile, TGraph, TCanvas, TLegend, TLatex, TPad
+    from ROOT import TFile, TGraph, TCanvas, TLegend, TLatex, TPad, TAttMarker
     #Create canvas
     c1 = TCanvas('c1', 'c1', 800, 800)
     c1.SetGrid(1,1)
@@ -14,12 +14,20 @@ if root:
     g2 = TGraph(slopes.format(2), '%lg %lg')
     g3 = TGraph(slopes.format(3), '%lg %lg')
     g1.GetXaxis().SetLimits(-4,4)
+    g1.GetXaxis().SetTitle("#theta")
     g1.GetYaxis().SetRangeUser(-200,200)
+    g1.GetYaxis().SetTitle("slope")
+    g1.SetMarkerStyle(1)
+    g1.SetMarkerSize(2)
     g1.SetMarkerColor(1);
     g1.SetTitle("Slope")
     g1.Draw('AP*')
+    g2.SetMarkerStyle(2)
+    g2.SetMarkerSize(2)
     g2.SetMarkerColor(2);
     g2.Draw('P*same')
+    g3.SetMarkerSize(2)
+    g3.SetMarkerStyle(3)
     g3.SetMarkerColor(4);
     g3.Draw('P*same')
     

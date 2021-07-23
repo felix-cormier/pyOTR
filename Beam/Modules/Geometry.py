@@ -18,8 +18,11 @@ def GetGeometry():
     
     #plane = Plane.PerfectPlane(
      #   normal=cf.plane['normal'], R=cf.plane['R'], name=cf.plane['name'])
+    
+    #reflector = Reflector.PerfectReflector(
+    #    normal=cf.reflector['normal'], R=cf.reflector['R'], name=cf.reflector['name'])
 
-    reflector = Reflector.PerfectReflector(
+    reflector = Reflector.ConnectedReflector(
         normal=cf.reflector['normal'], R=cf.reflector['R'], name=cf.reflector['name'])
     
     foil = Foil.CalibrationFoil(normal=np.array([[0., 1., 0.]]), diam=50.,
@@ -45,6 +48,6 @@ def GetGeometry():
     system = OpticalSystem.OpticalSystem()
   #  system.AddComponent(plane)
     system.AddComponent(reflector)
-  #  system.AddComponent(foil)
-    system.AddComponent(image)
+    system.AddComponent(foil)
+  #  system.AddComponent(image)
     return system

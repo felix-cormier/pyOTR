@@ -7,26 +7,30 @@ from LightSource import LightSource
 class Laser(LightSource):
     def __init__(self, rad=1.0, nrays=1_000_000, name=None):
         LightSource.__init__(self, nrays, name=name)
-        self.rad = rad
-        self.xorient = False
-        self.yorient = False
+        self.rad = rad #radius of laser circle
+        self.xorient = cf.laser['Xorient'] #include x-orientation marker
+        self.yorient = cf.laser['Yorient'] #include y-orientation marker
 
     def GenerateRaysV(self, shape):
         V = np.zeros(shape)
         V[:,0] = 1.0
-#        V = self.DirectRaysV(V)
         return V
 
     def DirectRays(self, X, V):
+        #Define velocity vector pointing from laser to reflector
         R = cf.reflector['Xl']-cf.laser['X']
         R = R/np.sqrt(R[0]**2 + R[1]**2 + R[2]**2) #normalize
-        print(R)
+        
+        #Normal vector defining plane on which R and the initial velocity lie
         r = np.cross(R,V[0]) #should be unit b/c cross of units
         r = r/np.sqrt(r[0]**2 + r[1]**2 + r[2]**2)
+        
         C = np.dot(R,V[0])
         t = 1-C
-        tht = np.arccos(C)
+        tht = np.arccos(C)#Angle between R and initial velocity
         S = np.sin(tht)
+        
+        #Rotate about r by angle
         M = np.array([[(t*r[0]*r[0] + C), (t*r[0]*r[1] - S*r[2]), (t*r[0]*r[2] + S*r[1])],
                   [t*r[0]*r[1] + S*r[2], t*r[1]*r[1] + C, t*r[1]*r[2] - S*r[0]],
                   [t*r[0]*r[2]-S*r[1], t*r[1]*r[2] + S*r[0], t*r[2]*r[2] + C]])
@@ -51,12 +55,6 @@ class Laser(LightSource):
         V = self.GenerateRaysV(X.shape)
         X = self.OrientRaysX(X)
         V = self.OrientRaysV(V)
-        print(' ')
-        print('Starting laser velocity')
-        print(V)
-        print('Starting laser position')
-        print(X)
-        print(' ')
         return X,V
     
     def GenerateRays_v2(self):
@@ -77,12 +75,6 @@ class Laser(LightSource):
         V = self.GenerateRaysV(X.shape)
         X, V = self.DirectRays(X,V)
         X = self.TranslateRaysX(X)
-        #print(' ')
-        #print('Starting laser velocity')
-        #print(V)
-        #print('Starting laser position')
-        #print(X)
-        #print(' ')
         return X,V
 
     def GenerateXMarker(self):

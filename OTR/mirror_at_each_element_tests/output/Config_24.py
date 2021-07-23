@@ -19,9 +19,9 @@ logfile = name + '.log'  # log output will be directed to this file and to scree
 chunck = 1_000
 
 pm = {
-    'tht':3., #mirror rotation about y in degrees
+    'tht':0., #mirror rotation about y in degrees
     'sig':np.array([0.,0.,0.]), #mirror translation
-    'eps':np.array([0.,0.,0.]), #camera translation
+    'eps':np.array([-10.,0.,0.]), #camera translation
     'wrt':'a' #Write style, 'w' or 'a'
 }
 
@@ -173,7 +173,7 @@ image_m4f = {
     'name': 'ImagePlane',
     'X': np.array([[-1100. + 2*M4['f'] +pm['eps'][0], 6522. + pm['eps'][1] , pm['eps'][2]]]),
     'yrot': True,
-    'angles': np.array([0., Conv(-90), 0.])
+    'angles': np.array([0., Conv(90), 0.])#other mirror rotations may need changing
 }
 
 level = logging.DEBUG if VERBOSE else logging.INFO

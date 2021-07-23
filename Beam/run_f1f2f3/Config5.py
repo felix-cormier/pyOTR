@@ -38,13 +38,10 @@ plane = {
 reflector = {
     'normal': np.array([[0., 1., 0.]]),
     'R': 1000.,
-    'X': np.array([-529.309,0.,0.]),
-    'Xl': np.array([-529.309,0.,2.]), #Where on reflector laser should land
+    'X': np.array([-377.,0.,0.]),
+    'Xl': np.array([-377.,0.,0.]), #Where on reflector laser should land
     'Xf': np.array([0.,0.,0.]), #Where on foil laser should land
-    #'angles': np.array([Conv(-50.813/2.), Conv(0.), Conv(0.)]), #no offset
-    #'angles': np.array([Conv(-50.9/2.), Conv(3.511), Conv(-0.04)]),
-    #'angles': np.array([Conv(-50.9/2.), Conv(-3.), Conv(-0.04)]),
-    'angles': np.array([Conv(-51.5/2.), Conv(6.99), Conv(0.015)]),
+    'angles': np.array([Conv(-52.15/2), 0., 0.]),
     'yrot': False,
     'name': 'ConnectedReflector'
 }

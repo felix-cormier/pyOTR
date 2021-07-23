@@ -49,6 +49,7 @@ class LightSource:
                        [sin(zrot), cos(zrot), 0],
                        [0, 0, 1]])
         return R3.dot(R2.dot(R1))
+        #return R1.dot(R2.dot(R3))
 
 
     def Place(self, xcent, ycent, zcent, angles=np.zeros(3)):
@@ -63,3 +64,6 @@ class LightSource:
     def OrientRaysX(self,Xorig):
         X = Xorig.dot(self.M)
         return X + np.array([self.x,self.y,self.z])
+    
+    def TranslateRaysX(self,Xorig):
+        return Xorig + np.array([self.x,self.y,self.z])

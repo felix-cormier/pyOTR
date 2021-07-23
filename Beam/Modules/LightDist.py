@@ -15,7 +15,7 @@ def RotateZ(V, angle):
                   [sin(angle), cos(angle), 0.],
                   [0., 0., 1.]
                   ])
-    return V.dot(M.T) #once you figure out if this is alright, ask Gabriel
+    return V.dot(M.T) 
 
 def RotateZ2(V, angle):
     #can use this to efficiently make a bunch of matrices from a list of angles

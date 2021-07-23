@@ -18,6 +18,13 @@ logfile = name + '.log'  # log output will be directed to this file and to scree
 
 chunck = 1_000
 
+pm = {
+    'tht':0., #mirror rotation about y in degrees
+    'sig':np.array([0.,0.,0.]), #mirror translation
+    'eps':np.array([-10.,0.,0.]), #camera translation
+    'wrt':'a' #Write style, 'w' or 'a'
+}
+
 light = {
     0: 'OTR',
     1: 'F1',
@@ -94,8 +101,9 @@ M3 = {
 }
 
 M4 = {
-    'X': np.array([[-1100., 6522., 0.]]),
-    'angles': np.array([Conv(180.), 0., 0.]),
+    'X': np.array([[-1100. + pm['sig'][0], 6522. + pm['sig'][1], 0. + pm['sig'][2]]]),
+    #'angles': np.array([Conv(180.), 0., 0.]), #correct
+    'angles': np.array([Conv(-90), Conv(-pm['tht']), Conv(-90)]), #correct
 	'f':300.,
     'H': 120.,
     'D': 120.,
@@ -111,39 +119,11 @@ camera = {
     'focal distance': 60.,
     'R': 10_000.,
     'name': 'ImagePlane',
-    
-    #At foil
-    #'X': np.array([[0., 0., 0.]]),
-    #Angles for pointed at bg dist
-  #  'angles': np.array([Conv(90), Conv(90), Conv(90)]),
-    #Angles for pointed at beam
-    #'angles': np.array([0., 0., 0.]),
-    
-    #At M1
-    #'X': np.array([[1100., 0., 0.]]),
-    #'X': np.array([[30., 0., 0.]]),
-    #'angles': np.array([Conv(90), Conv(90), Conv(90)]),
-    
-    #For background
-    #'X': np.array([[20., 0., 0.]]),#produced odd results
-    #'angles': np.array([Conv(90), Conv(90), Conv(90)]),
-    
-    #camera at M2 position
-    #'X': np.array([[1100., 3850., 0.]]),
-    #'angles': np.array([0., Conv(90), 0.])
-
-    #camera at M3 position
-    #'X': np.array([[-1100., 3850., 0.]]),
-    #'angles': np.array([Conv(90), Conv(90), 0.])
-
-    #camera at M4 position
-    #'X': np.array([[-1100., 6522., 0.]]),
-    #'angles': np.array([0., Conv(90), 0.])
-
     #camera at M4 focal point
-    'X': np.array([[-1100. + 2*M4['f'] -20., 6522., 0.]]),
+    'X': np.array([[-1100. + 2*M4['f'] - 10., 6522., 0.]]),
     'angles': np.array([Conv(90), Conv(90), 0.])
 }
+
 image_beam = {
     #Place a large image plane directly in front of the foil
     'R': 10_000.,
@@ -153,6 +133,7 @@ image_beam = {
     'yrot': True,
     'angles': np.array([0., Conv(180), 0.])
 }
+
 image_foil = {
     #Place a large image plane directly in front of the first mirror
     'R': 10_000.,
@@ -162,6 +143,7 @@ image_foil = {
     'yrot': True,
     'angles': np.array([0., Conv(-90), 0.])
 }
+
 image_m1 = {
     #Place a large image plane
     'R': 10_000.,
@@ -189,9 +171,9 @@ image_m3 = {
 image_m4f = {
     'R': 10_000.,
     'name': 'ImagePlane',
-    'X': np.array([[-1100. + 10. +  2*M4['f'], 6522., 0.]]),
+    'X': np.array([[-1100. + 2*M4['f'] +pm['eps'][0], 6522. + pm['eps'][1] , pm['eps'][2]]]),
     'yrot': True,
-    'angles': np.array([0., Conv(-90), 0.])
+    'angles': np.array([0., Conv(90), 0.])#other mirror rotations may need changing
 }
 
 level = logging.DEBUG if VERBOSE else logging.INFO

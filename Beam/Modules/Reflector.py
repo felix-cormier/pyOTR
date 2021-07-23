@@ -75,27 +75,6 @@ class ConnectedReflector(Reflector):
         self.R = R
 
     def GetGlobalNormal(self, vi, vf):
-        #After a couple tests, seems to be working!
-        #Note: keeping vf doesn't matter for this function because we've 
-        #selected the y-axis -- a general version should be written
-        N = np.zeros(3)
-        
-        if(vi[1] != 0):
-            N[1] = np.sqrt(1./(1. + (vi[2]/vi[1])**2 + ((vi[0]-1.)/vi[1])**2))
-            N[0] = (vi[0]-1)*N[1]/vi[1]
-            N[2] = vi[2]*N[1]/vi[1]
-            return N
-        
-        elif(vi[2] != 0):
-            N[2] = np.sqrt(1./(1. + (vi[1]/vi[2])**2 + ((vi[0]-1.)/vi[2])**2))
-            N[0] = (vi[0]-1)*N[2]/vi[2]
-            N[1] = vi[1]*N[2]/vi[2]
-            return N
-        
-        N = np.array([1,0,0])
-        return N
-    
-    def GetGlobalNormal_v2(self, vi, vf):
         Dx = vi[0] - vf[0]
         Dy = vi[1] - vf[1]
         Dz = vi[2] - vf[2]
@@ -105,34 +84,36 @@ class ConnectedReflector(Reflector):
             N[0] = np.sqrt(1./(1. + (Dy/Dx)**2 + (Dz/Dx)**2))
             N[1] = N[0]*Dy/Dx
             N[2] = N[0]*Dz/Dx
-            print("N = ")
-            print(N)
             return N
         elif(Dy != 0):
             N[1] = np.sqrt(1./(1. + (Dx/Dy)**2 + (Dz/Dy)**2))
             N[0] = N[1]*Dx/Dy
             N[2] = N[1]*Dz/Dy
-            print("N = ")
-            print(N)
             return N
         elif(Dz != 0):
             N[2] = np.sqrt(1./(1. + (Dx/Dz)**2 + (Dy/Dz)**2))
             N[0] = N[2]*Dx/Dz
             N[1] = N[2]*Dy/Dz
-            print("N = ")
-            print(N)
             return N
             
         print('There has been an error')
         return N
 
     def CalcSetM(self):
-        dXi = cf.reflector['Xl']-cf.laser['X']
-        dXf = cf.reflector['Xf']-cf.reflector['Xl']
+        if(cf.source == 'filament_v2'):
+            dXi = cf.reflector['Xl']-cf.filament['X']
+            dXf = cf.reflector['Xf']-cf.reflector['Xl']
+        elif(cf.source == 'laser'):
+            dXi = cf.reflector['Xl']-cf.laser['X']
+            dXf = cf.reflector['Xf']-cf.reflector['Xl']
+        else:
+            print('Error at connected reflector. No such light source')
+            return 0
+
         Vi = dXi/np.sqrt(dXi[0]**2 + dXi[1]**2 + dXi[2]**2) #normalize
         Vf = dXf*(1/np.sqrt(dXf[0]**2 + dXf[1]**2 + dXf[2]**2)) #normalize
         
-        n = self.GetGlobalNormal_v2(Vi,Vf)
+        n = self.GetGlobalNormal(Vi,Vf)
         y = np.array([0.,1.,0.])
         r = np.cross(y,n) #axis of rotation
         r = r/np.sqrt(r[0]**2 + r[1]**2 + r[2]**2)

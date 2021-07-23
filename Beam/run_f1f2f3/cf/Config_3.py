@@ -19,7 +19,7 @@ chunck = 1_000  # 0 if no division is to be made
 source = 'filament_v2' #backlight (filament/filament_v2), proton beam (protons), or laser (laser)
 
 pm = {
-    'psi': np.array([0.,0.,-50.])        
+    'psi': np.array([0.,0.,0.])        
 }
 
 beam = {
@@ -44,9 +44,9 @@ laser = {
 }
 
 filament = {
-        'X': np.array([-1128.875 + pm['psi'][0], 735.489 + pm['psi'][1], pm['psi'][2]]),
-        #'X': np.array([-1128.875, 735.489, 0.]),
-        'angles': np.array([0.,0.,Conv(50.813)]),
+        'X': np.array([-1051.9 + pm['psi'][0], 868.6 + pm['psi'][1], pm['psi'][2]]),
+        #'X': np.array([-1128.875 + pm['psi'][0], 735.489 + pm['psi'][1], pm['psi'][2]]),
+        'angles': np.array([0.,0.,Conv(52.15)]),
         'Vtype': 'divergent',
         'wire': True,
         'reflector': False,
@@ -94,13 +94,10 @@ plane = {
 reflector = {
     'normal': np.array([[0., 1., 0.]]),
     'R': 1000.,
-    'X': np.array([-529.309,0.,0.]),
-    'Xl': np.array([-529.309,0.,2.]), #Where on reflector laser should land
+    'X': np.array([-377.,0.,0.]),
+    'Xl': np.array([-377.,0.,0.]), #Where on reflector laser should land
     'Xf': np.array([0.,0.,0.]), #Where on foil laser should land
-    #'angles': np.array([Conv(-50.813/2.), Conv(0.), Conv(0.)]), #no offset
-    #'angles': np.array([Conv(-50.9/2.), Conv(3.511), Conv(-0.04)]),
-    #'angles': np.array([Conv(-50.9/2.), Conv(-3.), Conv(-0.04)]),
-    'angles': np.array([Conv(-51.5/2.), Conv(6.99), Conv(0.015)]),
+    'angles': np.array([Conv(-52.15/2), 0., 0.]),
     'yrot': False,
     'name': 'ConnectedReflector'
 }

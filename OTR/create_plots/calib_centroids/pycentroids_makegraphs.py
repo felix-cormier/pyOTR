@@ -2,21 +2,29 @@ import numpy as np
 
 def GetFitPMS(n, h = 0.775):
     from ROOT import TLatex
-    f = open(f'F{n}_fits.txt','r')
+    f = open(f'output/F{n}_fits.txt','r')
+#    f = open(f'output/F{n}_data.txt','r')
     fits = f.readlines()
-    s = TLatex(0.05,0.6,f"{fits[0]}")
+    title = TLatex(0.05,0.8,"F" + str(n) + ":")
+    title.SetTextFont(23)
+    title.SetTextSize(30)
+    s = TLatex(0.05,0.65,f"slope = {round(float(fits[0]),3)}")
     s.SetTextFont(23)
-    s.SetTextSize(22)
-    k = TLatex(0.05,0.4,f"{fits[1]}")
+    s.SetTextSize(20)
+    k = TLatex(0.05,0.45,f"k = {round(float(fits[1]),6)} / r = {round(float(fits[2]),3)}")
     k.SetTextFont(23)
-    k.SetTextSize(22)
-    x = TLatex(0.05,0.2,f"{fits[2]}")
+    k.SetTextSize(20)
+    x = TLatex(0.05,0.25,f"cross = ({round(float(fits[5]),3)} , {round(float(fits[6]),3)})")
     x.SetTextFont(23)
-    x.SetTextSize(22)
-    return s, k, x
+    x.SetTextSize(20)
+    mag = TLatex(0.05,0.05,f"mag = ({round(float(fits[3]),3)} , {round(float(fits[4]),3)})")
+    mag.SetTextFont(23)
+    mag.SetTextSize(20)
+    return title, s, k, x, mag
 
 #Get centroids, parameters
-centroids = 'F{}_centroids.txt'
+centroids = 'output/F{}_centroids.txt'
+#centroids = 'data/f{}.txt'
 parameters = open('../../mirror_at_each_element_tests/trace_through_system/files_npy/f3_4_pm.txt','r')
 pms = parameters.readlines()
 parameters.close()
@@ -30,7 +38,7 @@ if root:
     c1 = TCanvas('c1', 'c1', 1000, 800)
     c1.Divide(2,1);
     c1.cd(1).SetGrid(1,1);
-    outf = TFile('output/centers.root', 'recreate')
+    outf = TFile('centers.root', 'recreate')
     
     #Load and set graphs
     g1 = TGraph(centroids.format(1), '%lg %lg')
@@ -57,22 +65,26 @@ if root:
     pad1.SetFillColor(11);
     pad1.Draw(); 
     pad1.cd()
-    title1 = TLatex(0.05,0.82,"Simulation parameters")
+    title1 = TLatex(0.05,0.85,"Simulation parameters")
     title1.SetTextFont(23)
-    title1.SetTextSize(35)
-    ta = TLatex(0.05,0.6,pms[0])
+    title1.SetTextSize(30)
+    ta = TLatex(0.05,0.65,pms[0])
     ta.SetTextFont(23)
-    ta.SetTextSize(30)
-    tb = TLatex(0.05,0.4,pms[1])
+    ta.SetTextSize(25)
+    tb = TLatex(0.05,0.45,pms[1])
     tb.SetTextFont(23)
-    tb.SetTextSize(30)
-    tc = TLatex(0.05,0.2,pms[2])
+    tb.SetTextSize(25)
+    tc = TLatex(0.05,0.25,pms[2])
     tc.SetTextFont(23)
-    tc.SetTextSize(30)
+    tc.SetTextSize(25)
+    td = TLatex(0.05,0.05,pms[3])
+    td.SetTextFont(23)
+    td.SetTextSize(25)
     title1.Draw()
     ta.Draw()
     tb.Draw()
     tc.Draw()
+    td.Draw()
     c1.cd(2)
     #Draw fit pads
     f1pad = TPad("f1","f1",0.,0.48,1.,0.7);
@@ -86,28 +98,19 @@ if root:
     f3pad.Draw(); 
     f1pad.cd()
     #F1
-    tf1 = TLatex(0.05,0.775,"F1:")
-    tf1.SetTextFont(23)
-    tf1.SetTextSize(30)
+    tf1, s1, k1, x1, mag1 = GetFitPMS(1)
     tf1.Draw()
-    s1, k1, x1 = GetFitPMS(1)
-    s1.Draw(), k1.Draw(), x1.Draw()
+    s1.Draw(), k1.Draw(), x1.Draw(), mag1.Draw()
     #F2
     f2pad.cd()
-    tf2 = TLatex(0.05,0.775,"F2:")
-    tf2.SetTextFont(23)
-    tf2.SetTextSize(30)
+    tf2, s2, k2, x2, mag2 = GetFitPMS(2)
     tf2.Draw()
-    s2, k2, x2 = GetFitPMS(2)
-    s2.Draw(), k2.Draw(), x2.Draw()
+    s2.Draw(), k2.Draw(), x2.Draw(), mag2.Draw()
     #F3
     f3pad.cd()
-    tf3 = TLatex(0.05,0.775,"F3:")
-    tf3.SetTextFont(23)
-    tf3.SetTextSize(30)
+    tf3, s3, k3, x3, mag3 = GetFitPMS(3)
     tf3.Draw()
-    s3, k3, x3 = GetFitPMS(3)
-    s3.Draw(), k3.Draw(), x3.Draw()
+    s3.Draw(), k3.Draw(), x3.Draw(), mag3.Draw()
     #Save graphs and picture
     c1.SaveAs('output/centers.png')
     g1.SetName('g1')

@@ -40,10 +40,20 @@ model3.fit(f3[:, 0:2])
 c1 = model1.cluster_centers_[np.argsort(model1.cluster_centers_[:, 0])]
 c2 = model2.cluster_centers_[np.argsort(model2.cluster_centers_[:, 0])]
 c3 = model3.cluster_centers_[np.argsort(model3.cluster_centers_[:, 0])]
+#In case of reverse tilt
+c1[3:9] = c1[3:9][np.argsort(c1[3:9][:,1])]
+c2[3:9] = c2[3:9][np.argsort(c2[3:9][:,1])]
+c3[3:9] = c3[3:9][np.argsort(c3[3:9][:,1])]
 
+print("c1")
+print(c1)
+print("c2")
+print(c2)
+print("c3")
+print(c3)
 centroids = [c1, c2, c3]
 
-files = 'F{}_centroids.txt'
+files = 'output/F{}_centroids.txt'
 for i, centers in enumerate(centroids):
     with open(files.format(i+1), 'w') as f:
         for center in centers:
