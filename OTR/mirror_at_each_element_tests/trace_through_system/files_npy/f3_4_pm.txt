@@ -1,0 +1,4 @@
+#theta = 0.0
+#hat{#sigma} = [0. 0. 0.]
+#hat{#epsilon} = [-10.   0.   0.]
+#hat{#psi} = [0. 0. 0.]
