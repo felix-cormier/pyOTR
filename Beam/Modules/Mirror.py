@@ -77,8 +77,17 @@ class ParaMirror(Mirror):
         self.shift = np.array([[2. * self.f, self.f, 0]])
         self.acc = 1.e-3
         self.niter = 100
+        self.name = name
 
     def GetIncrement(self, t, X, V):
+        """
+
+        :param t:
+        :param X: Initial positions of rays before surface
+        :param V: Initial directions of rays before surface
+        :return:
+        """
+        #Transports to 2 times the focal length?
         Xr = X + self.shift + (V * t)
         Maux = np.array([-Xr[:, 0], [4. * self.f] * Xr.shape[0], -Xr[:, 2]])
         f = np.diag(Xr.dot(Maux))
@@ -103,6 +112,12 @@ class ParaMirror(Mirror):
         return V - 2 * np.diag(V.dot(self.normal.T)).reshape(V.shape[0], 1) * self.normal
 
     def PlaneIntersect(self, X, V):
+        """
+
+        :param X: Positions of rays
+        :param V: Directions of rays
+        :return: (I think) positions and directions after hitting surface
+        """
         # Initial guess:
         X0 = X
         V0 = V
@@ -119,7 +134,7 @@ class ParaMirror(Mirror):
             t = t - (f / fprime).reshape(f.shape[0], 1)
             i += 1
             if i > self.niter:
-                print(f'Failure to converge in {self.niter} iterations')
+                print(f'Failure to converge in {self.niter} iterations, mirror: ' + self.name)
                 break
         # intersection Point:
         X0 = X0 + (V0 * t)

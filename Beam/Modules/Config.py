@@ -10,21 +10,22 @@ def Conv(deg):
 VERBOSE = 1  # Set to 1 for debugging info
 
 save = True
-name = '../OTR/data/f3'
-pm_name = '../OTR/mirror_at_each_element_tests/trace_through_system/files_npy/f_shift'
+name = 'output/otr_filament_m2_1'
+#name = 'output/bg_gen_0.0'
+#name = 'output/bg_gen_0.025'
+#name = 'output/bg_gen_0.075'
+#name = '../OTR/data/otr_eps_1.0'  # name prefix used to create all outputs
+#name = '../OTR/data/fil_gen'  # name prefix used to create all outputs
 logfile = name + '.log'  # log output will be directed to this file and to screen
+not_parallel = True
 
-nrays = 1_000_000
-chunck = 1_000  # 0 if no division is to be made
+nrays = 1000
+chunck = 0  # 0 if no division is to be made
 source = 'filament_v2' #backlight (filament/filament_v2), proton beam (protons), or laser (laser)
 
-pm = {
-    'psi': np.array([0.,0.,0.])        
-}
-
 beam = {
-    #'x': -1000., #for filament backlight
-    'x': 0.,
+    'x': -1000., #for filament backlight
+    #'x': 0.,
     'y': 0.,
     #'z': 0.,
     'z': -100.,
@@ -37,31 +38,17 @@ beam = {
 
 }
 
-laser = {
-    'rad': 0.1,
-    'Xorient':True,
-    'Yorient':True,
-    'X': np.array([-1128.875 + pm['psi'][0], 735.489 + pm['psi'][1], pm['psi'][2]]),
-    #'X': np.array([-1128.875, 735.489, 0.]),
-    'angles': np.array([0.,0.,Conv(50.813)])
-}
-
 filament = {
-        'X': np.array([-1051.9 + pm['psi'][0], 868.6 + pm['psi'][1], pm['psi'][2]]),
-        #'X': np.array([-1128.875 + pm['psi'][0], 735.489 + pm['psi'][1], pm['psi'][2]]),
-        'angles': np.array([0.,0.,Conv(52.15)]),
-        'Vtype': 'divergent',
-        'wire': True,
-        'reflector': False,
-        'spread': 0.01,
-	'F1' : False,
-	'F2' : False,
-	'F3' : True
+        'Vtype': 'parallel',
+        'spread': 0.02,
+        'F1': True, #true for on, false for off
+        'F2': True,
+        'F3': True
 }
 
 background = {
     'length':25., 
-    'cfoil':1, #0,1,2 -> normal, cross, diamond
+    'cfoil':0, #0,1,2 -> normal, cross, diamond
     #'spread':0.0,
     #'spread':0.025,
     'spread':0.075,
@@ -97,12 +84,11 @@ plane = {
 reflector = {
     'normal': np.array([[0., 1., 0.]]),
     'R': 1000.,
-    'X': np.array([-377.,0.,0.]),
-    'Xl': np.array([-377.,0.,0.]), #Where on reflector laser should land
-    'Xf': np.array([0.,0.,0.]), #Where on foil laser should land
-    'angles': np.array([Conv(-52.15/2), 0., 0.]),
+    'X': np.array([-371.166,0.,0.]),
+    #'angles': np.array([0., 0., Conv(70.18)]), #x=oriented
+    'angles': np.array([0., 0., Conv(-51.066/2.)]),
     'yrot': False,
-    'name': 'ConnectedReflector'
+    'name': 'PerfectReflector'
 }
 
 foils = {
@@ -138,19 +124,43 @@ camera = {
     #'X': np.array([[0., 0., -20.]]),
     #Imaging filament
     #'X': np.array([[0.,0.,0.]]),
-    #'angles': np.array([0., -Conv(90), 0.]),
+    #'angles': np.array([0., Conv(90), Conv(45)]),
     #Angles for pointed at bg dist
     #'angles': np.array([0., -Conv(90), 0.]),
     #Angles for pointed at beam
     #'angles': np.array([0., 0., 0.]),
     #At M1
-    'X': np.array([[0., 0., 0.]]),
-    'angles': np.array([0., -Conv(90), 0.]),
+    'X': np.array([[1100., 3850., 0.]]),
+    'angles': np.array([0., Conv(180), 0.]),
     #For background
     #'X': np.array([[20., 0., 0.]]),#produced odd results
     #'angles': np.array([Conv(90), Conv(90), Conv(90)]),
     'R': 10_000.,
     'name': 'ImagePlane'
+}
+
+M1 = {
+    'X': np.array([[1100., 0., 0.]]),
+    'angles': np.array([0., 0., 0.]),
+    'f': 550.,
+    'H': 120.,
+    'D': 120.,
+   # 'H': 100_000.,
+   # 'D': 100_000.,
+    'rough': False,
+    'name': 'ParaMirror1'
+}
+
+M2 = {
+    'X': np.array([[1100., 3850., 0.]]),
+    'angles': np.array([0., Conv(180), 0.]),
+    'f': 550.,
+    'H': 120.,
+    'D': 120.,
+   # 'H': 100_000.,
+   # 'D': 100_000.,
+    'rough': False,
+    'name': 'ParaMirror2'
 }
 
 level = logging.DEBUG if VERBOSE else logging.INFO

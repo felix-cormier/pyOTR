@@ -1,31 +1,31 @@
-#import importlib
-#importlib.invalidate_caches()
 import concurrent.futures
 import numpy as np
 import Config as cf
 import Beam
 import Laser
-import Laser_v2
 import Filament
 import Geometry
 import time
 from PrepareData import PrepareData
 
 @cf.timer
-def SimulateBeam(X, V, system):
+def SimulateBeam(X, V, system, not_parallel):
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        results = executor.map(system.TraceRays, X, V)
-        for i, result in enumerate(results):
-            if i % 100 == 0:
-                cf.logger.debug(f'Running data piece: {i}')
-            x, v = result
-            assert x.shape == v.shape
-            if i == 0:
-                Xf = np.array(x)
-                Vf = np.array(v)
-            else:
-                Xf = np.concatenate((Xf, x), axis=0)
-                Vf = np.concatenate((Vf, v), axis=0)
+        if not_parallel:
+            Xf,Vf = system.TraceRays(X,V)
+        else:
+            results = executor.map(system.TraceRays, X, V)
+            for i, result in enumerate(results):
+                if i % 100 == 0:
+                    cf.logger.debug(f'Running data piece: {i}')
+                x, v = result
+                assert x.shape == v.shape
+                if i == 0:
+                    Xf = np.array(x)
+                    Vf = np.array(v)
+                else:
+                    Xf = np.concatenate((Xf, x), axis=0)
+                    Vf = np.concatenate((Vf, v), axis=0)
 
     Xf = np.array(Xf)
     Vf = np.array(Vf)
@@ -35,13 +35,14 @@ if __name__ == '__main__':
 
     cf.GetTime()
     # Get details about the beam:
-    #beam = Beam.Beam()
-    #laser = Laser.Laser(rad=cf.laser['rad'], nrays=1_000)
-    #laser.Place(cf.laser['X'][0], cf.laser['X'][1], cf.laser['X'][2], cf.laser['angles'])
+    beam = Beam.Beam()
+   # laser = Laser.Laser(rad=0.1, nrays=10_000)
+   # laser.Place(-1062.438, 855.654, 0., np.array([0.,0.,cf.Conv(51.066)]))
     
-    filament = Filament.Filament(nrays = 1_000_000)
-    filament.Place(cf.filament['X'][0],cf.filament['X'][1], cf.filament['X'][2], cf.filament['angles'])
-
+    filament = Filament.Filament(factor=0.5, nrays = cf.nrays)
+    filament.Place(-1062.438, 855.654, 0., np.array([0.,0.,cf.Conv(51.066)]))
+   # filament.Place(0., 0., 0., np.array([0.,0.,0.]))
+    
     if(cf.source == 'protons'):
         X, V = beam.GenerateBeam()
     elif(cf.source == 'filament'):
@@ -53,16 +54,13 @@ if __name__ == '__main__':
     elif(cf.source == 'filament_v2'):
         start = time.time()
         X,V = filament.GenerateRays()
-        print(X[:10])
-        print(V[:10])
         end = time.time()
         print(f"Filament backlight generation time: {end - start}")
     elif(cf.source == 'laser'):
         start = time.time()
-        X, V = laser.GenerateRays_v2()
-        #X, V = laser.GenerateRays()
+        X, V = laser.GenerateRays()
         end = time.time()
-        #print(f"Laser generation time: {end - start}")
+        #print(f"Filament backlight generation time: {end - start}")
     else:
         print('Not a valid source')
     
@@ -75,22 +73,21 @@ if __name__ == '__main__':
             np.save(f'{cf.name}_filamentX', X)
             np.save(f'{cf.name}_filamentV', V)
 
-    if cf.chunck > 0:
+    if cf.chunck > 0 and not cf.not_parallel:
         X, V  = PrepareData(X, V, chunck=cf.chunck)
-
 
     # Get the Foil Geometry: 
     system = Geometry.GetGeometry()
     # Run simulation:
-    X, V = SimulateBeam(X, V, system)
+    X, V = SimulateBeam(X, V, system, cf.not_parallel)
+    print('end')
     print(X[:10])
     print(V[:10])
-
+    print(X.shape)
     if cf.save:
         np.save(f'{cf.name}_X', X)
         np.save(f'{cf.name}_V', V)
-        pms = open(cf.pm_name + '_pm.txt', 'w')   
-        pms.write("#hat{#psi} = " + str(cf.pm['psi']))
+    
     cf.GetTime(start=False)
 
 

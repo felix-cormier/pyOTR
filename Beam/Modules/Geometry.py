@@ -18,13 +18,16 @@ def GetGeometry():
     
     #plane = Plane.PerfectPlane(
      #   normal=cf.plane['normal'], R=cf.plane['R'], name=cf.plane['name'])
-    
-    #reflector = Reflector.PerfectReflector(
-    #    normal=cf.reflector['normal'], R=cf.reflector['R'], name=cf.reflector['name'])
 
-    reflector = Reflector.ConnectedReflector(
+    reflector = Reflector.PerfectReflector(
         normal=cf.reflector['normal'], R=cf.reflector['R'], name=cf.reflector['name'])
-    
+
+    M1 = Mirror.ParaMirror(f=cf.M1['f'], H=cf.M1['H'], D=cf.M1['D'],
+                           rough=cf.M1['rough'], name=cf.M1['name'])
+
+    M2 = Mirror.ParaMirror(f=cf.M2['f'], H=cf.M2['H'], D=cf.M2['D'],
+                           rough=cf.M2['rough'], name=cf.M2['name'])
+
     foil = Foil.CalibrationFoil(normal=np.array([[0., 1., 0.]]), diam=50.,
                 hole_dist=7., hole_diam=1.2, name=cf.foil['name'], cross=cf.background['cfoil'])
     
@@ -42,6 +45,9 @@ def GetGeometry():
  #   plane.Place(X=cf.plane['X'], angles=cf.plane['angles'], yrot=cf.plane['yrot'])
   
     foil.Place(X=cf.foil['X'], angles=cf.foil['angles'])
+
+    M1.Place(X=cf.M1['X'], angles=cf.M1['angles'])
+    M2.Place(X=cf.M2['X'], angles=cf.M2['angles'])
    
     image.Place(X=cf.camera['X'], angles=cf.camera['angles'], yrot=cf.camera['yrot'])
 
@@ -49,5 +55,7 @@ def GetGeometry():
   #  system.AddComponent(plane)
     system.AddComponent(reflector)
     system.AddComponent(foil)
-  #  system.AddComponent(image)
+    system.AddComponent(M1)
+    system.AddComponent(M2)
+    system.AddComponent(image)
     return system

@@ -1,5 +1,3 @@
-import importlib
-importlib.invalidate_caches()
 import concurrent.futures
 import numpy as np
 import Config as cf
@@ -32,7 +30,6 @@ def SimulateOTR(X, V, system):
 if __name__ == '__main__':
 
     cf.GetTime()
-
     # Get details about the beam:
     X = np.load(cf.inputs.format('X'))
     V =	np.load(cf.inputs.format('V'))
@@ -45,19 +42,9 @@ if __name__ == '__main__':
 
     # Run simulation:
     X, V = SimulateOTR(X, V, system)
-    print('end')
-    print(X[:1])
-    print(V[:1])
-    print(X.shape)
+
     if cf.save:
-        np.save(f'{cf.name}_Xfinal', X)
-        np.save(f'{cf.name}_Vfinal', V)
-        pms = open(cf.name + '_pm.txt', 'w')
-        pms.write("#theta = " + str(cf.pm['tht']) + "\n")
-        pms.write("#hat{#sigma} = " + str(cf.pm['sig']) + "\n")
-        pms.write("#hat{#epsilon} = " + str(cf.pm['eps']) + "\n")
-        beam_pm = open('mirror_at_each_element_tests/trace_through_system/files_npy/f_shift_pm.txt')
-        psi = (beam_pm.readlines())[0]
-        pms.write(psi + "\n")
+        np.save(f'{cf.name}_Xfinal_2', X)
+        np.save(f'{cf.name}_Vfinal_2', V)
 
     cf.GetTime(start=False)
