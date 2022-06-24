@@ -1,8 +1,8 @@
 import numpy as np
 from numpy import sqrt, pi, exp
-import LightDist
-import Config as cf
-from OpticalComponent import OpticalComponent
+import Beam.Modules.LightDist
+import Beam.Modules.Config as cf
+from include.OpticalComponent import OpticalComponent
 
 
 # Generic Foil class, common among all Foils:

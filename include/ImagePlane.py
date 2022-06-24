@@ -1,5 +1,5 @@
 import numpy as np
-from OpticalComponent import OpticalComponent
+from include.OpticalComponent import OpticalComponent
 
 
 class ImagePlane(OpticalComponent):

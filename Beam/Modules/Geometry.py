@@ -1,10 +1,10 @@
-import Config as cf
-import Foil
-import Mirror
-import ImagePlane
-import OpticalSystem
-import Reflector
-import Plane
+from Beam.Modules.Config import generatorConfig
+import Beam.Modules.Foil
+import Beam.Modules.Mirror
+import include.ImagePlane
+import include.OpticalSystem
+import Beam.Modules.Reflector
+import Beam.Modules.Plane
 import numpy as np
 
 

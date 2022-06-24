@@ -1,6 +1,6 @@
 import numpy as np
 from numpy import sin, cos, pi
-import Config as cf
+from Beam.Modules.Config import generatorConfig
 from scipy.stats import truncnorm
 
 

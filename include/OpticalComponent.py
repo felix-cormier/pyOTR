@@ -1,5 +1,5 @@
 import numpy as np
-import CoordTrans
+import include.CoordTrans
 
 
 class OpticalComponent:

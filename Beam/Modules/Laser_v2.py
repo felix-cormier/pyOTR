@@ -1,7 +1,7 @@
 import numpy as np
 from numpy import cos, sin, sqrt, pi, exp
 import Config as cf
-from OpticalComponent import OpticalComponent
+from include.OpticalComponent import OpticalComponent
 
 
 class Laser_v2(OpticalComponent):

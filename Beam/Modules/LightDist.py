@@ -5,7 +5,7 @@ from numpy.random import rand
 from scipy.stats import moyal
 from random import random
 from pynverse import inversefunc
-import Config as cf
+from Beam.Modules.Config import generatorConfig
 
 def Conv(deg):
     return (np.pi * deg) / 180.

@@ -1,8 +1,8 @@
 import numpy as np
 from numpy import cos, sin, sqrt, pi, exp
 from scipy.stats import truncnorm
-import Config as cf
-from LightSource import LightSource
+from Beam.Modules.Config import generatorConfig
+from include.LightSource import LightSource
 
 
 class Filament(LightSource):
@@ -11,6 +11,7 @@ class Filament(LightSource):
         self.nrays = nrays
         self.conversion = factor
         self.rad = 35.0/2
+
         self.sep = 40.0
         self.l_wire = 10.5*self.conversion
         self.wire = False #true = on

@@ -1,7 +1,7 @@
 import numpy as np
 from numpy import cos, sin, sqrt, pi, exp
-import Config as cf
-from LightSource import LightSource
+from Beam.Modules.Config import generatorConfig
+from include.LightSource import LightSource
 
 
 class Laser(LightSource):
