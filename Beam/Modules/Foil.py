@@ -66,10 +66,10 @@ class CalibrationFoil(Foil):
 
     def GetHoles(self, cross=0):
         if cross == 1 or cross ==2:
-            from MakeCalibHoles import MakeCross
+            from Beam.Modules.MakeCalibHoles import MakeCross
             return MakeCross(5.657, 4., 1.2, cross)
         import os
-        from MakeCalibHoles import MakeHoles
+        from Beam.Modules.MakeCalibHoles import MakeHoles
         calibfile = 'data/calib_holes.npy'
         if os.path.isfile(calibfile):
             return np.load(calibfile)

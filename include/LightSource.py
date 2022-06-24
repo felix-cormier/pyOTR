@@ -8,9 +8,9 @@ from numpy import sin, cos, pi
 #Multipled sources can be used at once, generate multiple then concatenate
 
 class LightSource:
-    def __init__(self, nrays=1_000_000, name=None):
+    def __init__(self, generator_options, name=None):
         self.name = name
-        self.nrays = nrays
+        self.nrays = generator_options.nrays
         self.angles= np.zeros(3)
         self.M = self.GetM()
         self.x = 0.

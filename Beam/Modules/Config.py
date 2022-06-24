@@ -23,6 +23,7 @@ class generatorConfig():
         self.chunck=chunck
         self.source=source
         self.logfile = name + '.log'  # log output will be directed to this file and to screen
+        self.logger = self.init_logger()
 
         self.filament = {
             'Vtype': 'parallel',
@@ -176,14 +177,26 @@ class generatorConfig():
         file_handler = logging.FileHandler(self.logfile)
         logger.addHandler(file_handler)
         logger.addHandler(stream_handler)
-    def GetTime(start=True):
+        return logger
+
+    def GetTime(self, start=True):
         now = datetime.datetime.now()
         now = now.strftime('%Y, %b %d %H:%M:%S')
         if start:
             message = f'{now}\nStarting beam generation:'
         else:
             message = f'Ending beam generation, bye!!\n{now}'
-        logger.info(message)
+        self.logger.info(message)
+
+    # Decorator to measure the time each function takes to run:
+    def timer(self,func):
+        def wrapper(*args, **kwargs):
+            t0 = time.time()
+            result = func(*args, **kwargs)
+            dt = time.time() - t0
+            logger.info(f'{func.__name__} ran in {dt:.2f} s')
+            return result
+        return wrapper
 
 
 
@@ -192,13 +205,3 @@ class generatorConfig():
 
 
 
-
-# Decorator to measure the time each function takes to run:
-def timer(func):
-    def wrapper(*args, **kwargs):
-        t0 = time.time()
-        result = func(*args, **kwargs)
-        dt = time.time() - t0
-        logger.info(f'{func.__name__} ran in {dt:.2f} s')
-        return result
-    return wrapper

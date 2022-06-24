@@ -9,13 +9,13 @@
             "type": "python",
             "request": "attach",
             "connect": {
-                "host": "cdr1132",
+                "host": "nc30217",
                 "port": 1080
             },
             "pathMappings": [
                 {
                     "localRoot": "${workspaceFolder}",
-                    "remoteRoot": "/home/fcormier/t2k/otr/ray_tracking/pyOTR/"
+                    "remoteRoot": "/home/fcormier/t2k/otr/pyOTR/"
                 }
             ],
             "justMyCode": false

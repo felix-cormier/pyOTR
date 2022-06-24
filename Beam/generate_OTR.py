@@ -3,16 +3,16 @@
 import concurrent.futures
 import numpy as np
 from Beam.Modules.Config import generatorConfig, Conv
-import Beam.Modules.Beam
-import Beam.Modules.Laser
-import Beam.Modules.Filament
-import Beam.Modules.Geometry
+import Beam.Modules.Beam as Beam
+import Beam.Modules.Laser as Laser
+import Beam.Modules.Filament as Filament
+import Beam.Modules.Geometry as Geometry
 import time
 from include.PrepareData import PrepareData
 
-def SimulateBeam(X, V, system, not_parallel):
+def SimulateBeam(X, V, system, generator_options):
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        if not_parallel:
+        if generator_options.not_parallel:
             Xf,Vf = system.TraceRays(X,V)
         else:
             results = executor.map(system.TraceRays, X, V)
@@ -32,36 +32,35 @@ def SimulateBeam(X, V, system, not_parallel):
     Vf = np.array(Vf)
     return Xf, Vf
 
-if __name__ == '__main__':
-    generate_OTR()
+
 
 def generate_OTR():
 
     generator_options = generatorConfig()
     generator_options.GetTime()
     # Get details about the beam:
-    beam = Beam.Beam()
+    beam = Beam.Beam(generator_options)
    # laser = Laser.Laser(rad=0.1, nrays=10_000)
    # laser.Place(-1062.438, 855.654, 0., np.array([0.,0.,generator_options.Conv(51.066)]))
     
-    filament = Filament.Filament(factor=0.5, nrays = generator_options.nrays)
+    filament = Filament.Filament( generator_options, factor=0.5)
     filament.Place(-1062.438, 855.654, 0., np.array([0.,0.,Conv(51.066)]))
    # filament.Place(0., 0., 0., np.array([0.,0.,0.]))
     
-    if(generator_options.source == 'protons'):
+    if(generator_options.source.name == 'protons'):
         X, V = beam.GenerateBeam()
-    elif(generator_options.source == 'filament'):
+    elif(generator_options.source.name == 'filament'):
         start = time.time()
        # X, V = beam.GenerateFilamentBacklight_v1()
         X, V = beam.GenerateFilament()
         end = time.time()
         print(f"Filament backlight generation time: {end - start}")
-    elif(generator_options.source == 'filament_v2'):
+    elif(generator_options.source.name == 'filament_v2'):
         start = time.time()
         X,V = filament.GenerateRays()
         end = time.time()
         print(f"Filament backlight generation time: {end - start}")
-    elif(generator_options.source == 'laser'):
+    elif(generator_options.source.name == 'laser'):
         start = time.time()
         X, V = laser.GenerateRays()
         end = time.time()
@@ -71,7 +70,7 @@ def generate_OTR():
     
     #Save initial distribution
     if generator_options.save:
-        if(generator_options.source == 'protons'):
+        if(generator_options.source.name == 'protons'):
             np.save(f'{generator_options.name}_protonsX', X)
             np.save(f'{generator_options.name}_protonsV', V)
         elif(generator_options.source == 'filament'):
@@ -82,9 +81,9 @@ def generate_OTR():
         X, V  = PrepareData(X, V, chunck=generator_options.chunck)
 
     # Get the Foil Geometry: 
-    system = Geometry.GetGeometry()
+    system = Geometry.GetGeometry(generator_options)
     # Run simulation:
-    X, V = SimulateBeam(X, V, system, generator_options.not_parallel)
+    X, V = SimulateBeam(X, V, system, generator_options)
     print('end')
     print(X[:10])
     print(V[:10])
@@ -95,4 +94,5 @@ def generate_OTR():
     
     generator_options.GetTime(start=False)
 
-
+if __name__ == '__main__':
+    generate_OTR()

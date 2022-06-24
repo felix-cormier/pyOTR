@@ -6,9 +6,10 @@ from include.LightSource import LightSource
 
 
 class Filament(LightSource):
-    def __init__(self, factor=0.5, nrays=1_000_000, name=None):
-        LightSource.__init__(self, nrays, name=name)
-        self.nrays = nrays
+    def __init__(self, generator_options, factor=0.5, name=None):
+        LightSource.__init__(self, generator_options, name=name)
+        self.settings = generator_options
+        self.nrays = self.settings.nrays
         self.conversion = factor
         self.rad = 35.0/2
 
@@ -17,10 +18,10 @@ class Filament(LightSource):
         self.wire = False #true = on
         self.reflector = True #true = on
         if(self.reflector):
-            if cf.filament['Vtype'] == 'parallel':
-                cf.logger.info(f'Selected filament light source with parallel rays')
-            elif cf.filament['Vtype'] == 'divergent':
-                cf.logger.info(f'Selected filament light source light source with div=' + str(cf.filament['spread']))
+            if self.settings.filament['Vtype'] == 'parallel':
+                self.settings.logger.info(f'Selected filament light source with parallel rays')
+            elif self.settings.filament['Vtype'] == 'divergent':
+                self.settings.logger.info(f'Selected filament light source light source with div=' + str(self.settings.filament['spread']))
 
     def GenerateWireRaysV(self,shape):
         V = np.zeros(shape)
@@ -53,8 +54,8 @@ class Filament(LightSource):
 
     def GenerateReflRaysV(self, shape):
         V = np.zeros(shape)
-        Vtype = cf.filament['Vtype']
-        spread = cf.filament['spread']
+        Vtype = self.settings.filament['Vtype']
+        spread = self.settings.filament['spread']
         if Vtype == 'parallel':
             V[:,0] = 1.
             return V
@@ -73,7 +74,7 @@ class Filament(LightSource):
             V[:,0] = np.sqrt(1. - V[:,1]*V[:,1] - V[:,2]*V[:,2])
             return V
         else:
-            cf.logger.info('Unknown velocity distribution...exiting')
+            self.settings.logger.info('Unknown velocity distribution...exiting')
             sys.exit()
         return V
     
@@ -120,22 +121,22 @@ class Filament(LightSource):
         return X,V
 
     def GenerateRays(self):
-        if(cf.filament['F1']):
+        if(self.settings.filament['F1']):
             X,V = self.GenerateFilament(shift=np.array([0.,self.sep/2, -self.sep/2]))
             #X,V = self.GenerateFilament()
-            cf.logger.info(f'F1:Added')
-        if(cf.filament['F2']):
-            cf.logger.info(f'F2:Added')
-            if(cf.filament['F1'] == False):
+            self.settings.logger.info(f'F1:Added')
+        if(self.settings.filament['F2']):
+            self.settings.logger.info(f'F2:Added')
+            if(self.settings.filament['F1'] == False):
                 X,V = self.GenerateFilament(shift=np.array([0.,self.sep/2, self.sep/2]))
                 #X,V = self.GenerateFilament(shift=np.array([0.,0., 0.]))
             else:
                 X2,V2 = self.GenerateFilament(shift=np.array([0.,self.sep/2, self.sep/2]))
                 X = np.concatenate((X,X2),axis=0)
                 V = np.concatenate((V,V2),axis=0)
-        if(cf.filament['F3']):
-            cf.logger.info(f'F3:Added')
-            if(cf.filament['F1'] == False and cf.filament['F2'] == False):
+        if(self.settings.filament['F3']):
+            self.settings.logger.info(f'F3:Added')
+            if(self.settings.filament['F1'] == False and self.settings.filament['F2'] == False):
                 X,V = self.GenerateFilament(shift=np.array([0.,-self.sep/2, self.sep/2]))
             else:
                 X3,V3 = self.GenerateFilament(np.array([0.,-self.sep/2, self.sep/2]))
