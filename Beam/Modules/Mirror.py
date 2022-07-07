@@ -1,10 +1,10 @@
 import numpy as np
-from include.OpticalComponent import OpticalComponent
+from OTR.include.OpticalComponent import OpticalComponent
 
 
 class Mirror(OpticalComponent):
-    def __init__(self, name=None):
-        OpticalComponent.__init__(self, name=name)
+    def __init__(self, isGenerator=False, name=None):
+        OpticalComponent.__init__(self, isGenerator, name=name)
 
     def PlaneTransport(self, X, V):
         X, V = self.PlaneIntersect(X, V)
@@ -17,6 +17,7 @@ class Mirror(OpticalComponent):
         print('at mirror')
         print(V[:10])
         # Get the interaction points X and the V reflected:
+        print(f"X shape: {X.shape}")
         X, V = self.PlaneTransport(X, V)
         # Transform back to the global coords:
         #X = self.transform_coord.TransfrmPoint(X, inv=True)
@@ -25,8 +26,8 @@ class Mirror(OpticalComponent):
 
 
 class PlaneMirror(Mirror):
-    def __init__(self, normal=np.array([[0., 0., -1.]]), R=20., name='PlaneMirror'):
-        Mirror.__init__(self, name=name)
+    def __init__(self, isGenerator=False, normal=np.array([[0., 0., -1.]]), R=20., name='PlaneMirror'):
+        Mirror.__init__(self, isGenerator, name=name)
         self.normal = normal
         self.R = R
 
@@ -67,8 +68,8 @@ class PlaneMirror(Mirror):
 
 
 class ParaMirror(Mirror):
-    def __init__(self, f=550., H=120., D=120., rough=False, name=None):
-        Mirror.__init__(self, name=name)
+    def __init__(self, isGenerator=False, f=550., H=120., D=120., rough=False, name=None):
+        Mirror.__init__(self, isGenerator, name=name)
         self.f = f  # focal length
         self.f2 = 2. * self.f  # double the focal length
         self.H = H  # Height

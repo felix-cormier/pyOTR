@@ -1,8 +1,14 @@
 import logging
 import datetime
 import time
+import os
 import numpy as np
 from enum import Enum
+from generics_python.make_plots import generic_2D_plot  
+
+import matplotlib
+matplotlib.use('agg')
+import matplotlib.pyplot as plt
 
 def Conv(deg):
     return (np.pi * deg) / 180.
@@ -14,7 +20,7 @@ class Source(Enum):
     laser=3
 
 class generatorConfig():
-    def __init__(self, verbose=1, save=False, name='test', not_parallel=True, nrays=1000, chunck=0, source=Source.filament_v2) -> None:
+    def __init__(self, verbose=1, save=False, name='test', not_parallel=False, nrays=20000, chunck=0, source=Source.protons, output_path='output/') -> None:
         self.verbose=verbose #1 for debuggiing info
         self.save=save
         self.name=name
@@ -24,6 +30,7 @@ class generatorConfig():
         self.source=source
         self.logfile = name + '.log'  # log output will be directed to this file and to screen
         self.logger = self.init_logger()
+        self.output_path = output_path
 
         self.filament = {
             'Vtype': 'parallel',
@@ -92,7 +99,7 @@ class generatorConfig():
         self.foil = {
             'X': np.zeros((1, 3)),
             'angles': np.array([0., Conv(90), Conv(45)]),
-        # 'angles': np.array([0., Conv(90), 0.]),
+            # 'angles': np.array([0., Conv(90), 0.]),
             'normal': np.array([[0, -1, 0]]),
             'eps':1.0,
             'D': 50.,
@@ -153,8 +160,8 @@ class generatorConfig():
 
 
         self.beam = {
-            'x': -1000., #for filament backlight
-            #'x': 0.,
+            #'x': -1000., #for filament backlight
+            'x': 0.,
             'y': 0.,
             #'z': 0.,
             'z': -100.,
@@ -179,6 +186,126 @@ class generatorConfig():
         logger.addHandler(stream_handler)
         return logger
 
+    def diagnosticImage_parallel(self, hh_container, hh_f_container, hh_r_container, xedges_container, yedges_container, xedges_f_container, yedges_f_container, xedges_r_container, yedges_r_container, name):
+
+        plt.imshow(hh_container, interpolation='nearest', origin='lower',extent=[xedges_container[0], xedges_container[-1], yedges_container[0], yedges_container[-1]])
+        plt.savefig(self.output_path+'/'+name+'_X.png', format='png', transparent=False)
+
+        plt.imshow(hh_f_container, interpolation='nearest', origin='lower',extent=[xedges_f_container[0], xedges_f_container[-1], yedges_f_container[0], yedges_f_container[-1]])
+        plt.savefig(self.output_path+'/'+name+'_Xf.png', format='png', transparent=False)
+
+        plt.imshow(hh_r_container, interpolation='nearest', origin='lower',extent=[xedges_r_container[0], xedges_r_container[-1], yedges_r_container[0], yedges_r_container[-1]])
+        plt.savefig(self.output_path+'/'+name+'_Xr.png', format='png', transparent=False)
+
+    def diagnosticImage(self, X,V, name, dim = None, parallel = False):
+        Xf, Xr = [], []
+
+        #To find out which dimensions to plot
+        x_0_min = np.amin(X[:,0])
+        x_0_max = np.amax(X[:,0])
+        x_1_min = np.amin(X[:,1])
+        x_1_max = np.amax(X[:,1])
+        x_2_min = np.amin(X[:,2])
+        x_2_max = np.amax(X[:,2])
+
+        num_bins=50
+
+        dim_0 = 0
+        dim_1 = 1
+
+        if 0 > x_0_min and 0 < x_0_max:
+            dim_0 = 0
+            if 0 > x_1_min and 0 < x_1_max: 
+                dim_1=1
+            else:
+                dim_1=2
+        else:
+            dim_0 = 1
+            dim_1 = 2
+        if "Image" in name:
+            dim_0 = 0
+            dim_1 = 1
+
+        for x, v in zip(X, V):
+            if v[2] > 0:
+                Xf.append((x[0], x[1], x[2]))
+            else:
+                Xr.append((x[0], x[1], x[2]))
+        Xf = np.array(Xf).T
+        print(f"generated Xf shape: {Xf.shape}")
+        Xr = np.array(Xr).T
+        print(f"generated Xr shape: {Xr.shape}")
+        try:
+            os.makedirs(self.output_path)
+        except FileExistsError:
+            pass
+
+        if dim is not None:
+            x_min_X = dim[0]
+            x_max_X = dim[1]
+            y_min_X = dim[2]
+            y_max_X = dim[3]
+
+            x_min_Xrf = dim[0]
+            x_max_Xrf = dim[1]
+            y_min_Xrf = dim[2]
+            y_max_Xrf = dim[3]
+        else:
+            x_min_X = np.amin(X[:,dim_0])
+            x_max_X = np.amin(X[:,dim_0])
+            y_min_X = np.amin(X[:,dim_1]) 
+            y_max_X = np.amax(X[:,dim_1]) 
+
+            x_min_Xrf = np.amin(X[dim_0,:])
+            x_max_Xrf = np.amin(X[dim_0,:])
+            y_min_Xrf = np.amin(X[dim_1,:]) 
+            y_max_Xrf = np.amax(X[dim_1,:]) 
+
+        hh=None
+        xedges = None
+        yedges = None
+        hh_f = None
+        xedges_f = None
+        yedges_f = None
+        hh_r = None
+        xedges_r = None
+        yedges_r = None
+
+        if len(X.shape) > 1 and X.shape[1] > 0:
+            if parallel:
+                hh, xedges, yedges = generic_2D_plot(X[:,dim_0], X[:,dim_1], [ x_min_X, x_max_X], num_bins, "Transmitted X", [y_min_X, y_max_X], num_bins, 
+                                "Transmitted Y", "Position", self.output_path, name+"_all", return_hist = True, save_plot = False)
+            else:
+                generic_2D_plot(X[:,dim_0], X[:,dim_1], [ x_min_X, x_max_X], num_bins, "Transmitted X", [y_min_X, y_max_X], num_bins, 
+                                "Transmitted Y", "Position", self.output_path, name+"_all")
+        if len(Xf.shape) > 1 and Xf.shape[1] > 0:
+            if parallel:
+                hh_f, xedges_f, yedges_f = generic_2D_plot(Xf[dim_0,:], Xf[dim_1,:], [x_min_Xrf, x_max_Xrf], num_bins, "Transmitted X", [y_min_Xrf, y_max_Xrf], num_bins, 
+                                    "Transmitted Y", "Position", self.output_path, name+"_transmitted", return_hist = True, save_plot=False)
+            else:
+                generic_2D_plot(Xf[dim_0,:], Xf[dim_1,:], [x_min_Xrf, x_max_Xrf], num_bins, "Transmitted X", [y_min_Xrf, y_max_Xrf], num_bins, 
+                                    "Transmitted Y", "Position", self.output_path, name+"_transmitted")
+        if len(Xr.shape) > 1 and Xr.shape[1] > 0:
+            if parallel:
+                hh_r, xedges_r, yedges_r = generic_2D_plot(Xr[dim_0,:], Xr[dim_1,:], [x_min_Xrf, x_max_Xrf], num_bins, "Reflected X", [y_min_Xrf, y_max_Xrf], num_bins, 
+                                    "Reflected Y", "Position", self.output_path, name+"_reflected", return_hist = True, save_plot = False)
+            else:
+                generic_2D_plot(Xr[dim_0,:], Xr[dim_1,:], [x_min_Xrf, x_max_Xrf], num_bins, "Reflected X", [y_min_Xrf, y_max_Xrf], num_bins, 
+                                    "Reflected Y", "Position", self.output_path, name+"_reflected")
+
+        if parallel:
+            if hh is None:
+                hh = np.zeros([num_bins, num_bins])
+            if hh_f is None:
+                hh_f = np.zeros([num_bins, num_bins])
+                xedges_f = xedges
+                yedges_f = yedges
+            if hh_r is None:
+                hh_r = np.zeros([num_bins, num_bins])
+                xedges_r = xedges
+                yedges_r = yedges
+            return hh, xedges, yedges, hh_f, xedges_f, yedges_f, hh_r, xedges_r, yedges_r
+
     def GetTime(self, start=True):
         now = datetime.datetime.now()
         now = now.strftime('%Y, %b %d %H:%M:%S')
@@ -197,6 +324,8 @@ class generatorConfig():
             logger.info(f'{func.__name__} ran in {dt:.2f} s')
             return result
         return wrapper
+
+
 
 
 

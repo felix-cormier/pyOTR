@@ -1,5 +1,5 @@
 import numpy as np
-from OpticalComponent import OpticalComponent
+from OTR.include.OpticalComponent import OpticalComponent
 
 
 class Mirror(OpticalComponent):

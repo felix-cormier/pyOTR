@@ -1,10 +1,11 @@
 import numpy as np
-import include.CoordTrans as CoordTrans
+import OTR.include.CoordTrans as CoordTrans
 
 
 class OpticalComponent:
-    def __init__(self, name=None):
+    def __init__(self, isGenerator=False, name=None):
         self.name = name
+        self.isGenerator=isGenerator
 
     def SetName(self, name):
         self.name = name

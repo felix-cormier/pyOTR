@@ -9,7 +9,7 @@
             "type": "python",
             "request": "attach",
             "connect": {
-                "host": "nc30217",
+                "host": "nc10129",
                 "port": 1080
             },
             "pathMappings": [

@@ -1,0 +1,3 @@
+[submodule "generics_python"]
+	path = generics_python
+	url = https://github.com/felix-cormier/generics_python.git

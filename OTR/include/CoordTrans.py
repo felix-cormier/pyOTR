@@ -3,6 +3,8 @@ from numpy import cos, sin
 
 
 class CoordTrans():
+    """_summary_ Converts to and from local to global coordinates
+    """
     def __init__(self, X=np.zeros((1, 3)), angles=np.zeros(3), yrot=False):
         # angles = phi, theta, psi
         self.X = X

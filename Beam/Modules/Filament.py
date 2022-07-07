@@ -2,7 +2,7 @@ import numpy as np
 from numpy import cos, sin, sqrt, pi, exp
 from scipy.stats import truncnorm
 from Beam.Modules.Config import generatorConfig
-from include.LightSource import LightSource
+from OTR.include.LightSource import LightSource
 
 
 class Filament(LightSource):
@@ -96,14 +96,23 @@ class Filament(LightSource):
 
     def GenerateReflFilament(self, shift=np.array([0.,0.,0.])):
         shape = (self.nrays, 3)
+        print(f"nrays: {self.nrays}")
         X = np.zeros(shape)
         if(self.rad != 0):
             theta = np.random.uniform(0, 2*pi, self.nrays)
             r = sqrt(np.random.uniform(0, self.rad**2, self.nrays))
             X[:,2] = r*cos(theta)
             X[:,1] = r*sin(theta)
+            
+        dummy_V=np.ones(X.shape)
+        self.settings.diagnosticImage(X,dummy_V, 'Gen_1')
+
         X = X + shift
+        dummy_V=np.ones(X.shape)
+        self.settings.diagnosticImage(X,dummy_V, 'Gen_2')
         X = self.OrientRaysX(X)
+        dummy_V=np.ones(X.shape)
+        self.settings.diagnosticImage(X,dummy_V, 'Gen_3')
         V = self.GenerateReflRaysV(X.shape)
         V = self.OrientRaysV(V)
         return X,V
@@ -123,6 +132,7 @@ class Filament(LightSource):
     def GenerateRays(self):
         if(self.settings.filament['F1']):
             X,V = self.GenerateFilament(shift=np.array([0.,self.sep/2, -self.sep/2]))
+            self.settings.diagnosticImage(X,V, 'F1')
             #X,V = self.GenerateFilament()
             self.settings.logger.info(f'F1:Added')
         if(self.settings.filament['F2']):
@@ -132,6 +142,7 @@ class Filament(LightSource):
                 #X,V = self.GenerateFilament(shift=np.array([0.,0., 0.]))
             else:
                 X2,V2 = self.GenerateFilament(shift=np.array([0.,self.sep/2, self.sep/2]))
+                self.settings.diagnosticImage(X2,V2, 'F2')
                 X = np.concatenate((X,X2),axis=0)
                 V = np.concatenate((V,V2),axis=0)
         if(self.settings.filament['F3']):
@@ -140,6 +151,7 @@ class Filament(LightSource):
                 X,V = self.GenerateFilament(shift=np.array([0.,-self.sep/2, self.sep/2]))
             else:
                 X3,V3 = self.GenerateFilament(np.array([0.,-self.sep/2, self.sep/2]))
+                self.settings.diagnosticImage(X3,V3, 'F3')
                 X = np.concatenate((X,X3),axis=0)
                 V = np.concatenate((V,V3),axis=0)
         return X,V
