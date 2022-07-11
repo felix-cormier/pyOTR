@@ -17,14 +17,35 @@ def SimulateOTR(X, V, system, generator_options, isGenerator):
             for i, result in enumerate(results):
                 if i % 100 == 0:
                     generator_options.logger.debug(f'Running data piece: {i}')
-                x, v = result
+                x, v, hh_container, xedges_container, yedges_container, hh_f_container, xedges_f_container, yedges_f_container, hh_r_container, xedges_r_container, yedges_r_container, name_container, dim_container = result
                 assert x.shape == v.shape
                 if i == 0:
                     Xf = np.array(x)
                     Vf = np.array(v)
+                    hh = np.array(hh_container)
+                    hh_f = np.array(hh_f_container)
+                    hh_r = np.array(hh_r_container)
+                    xedges = xedges_container
+                    yedges = yedges_container
+                    xedges_f = xedges_f_container
+                    yedges_f = yedges_f_container
+                    xedges_r = xedges_r_container
+                    yedges_r = yedges_r_container
+                    name = name_container
+                    dim = dim_container
                 else:
                     Xf = np.concatenate((Xf, x), axis=0)
                     Vf = np.concatenate((Vf, v), axis=0)
+                    if hh is not None and hh_container is not None:
+                        hh = np.add(hh, hh_container)
+                    if hh_f is not None and hh_f_container is not None:
+                        hh_f = np.add(hh_f, hh_f_container)
+                    if hh_r is not None and hh_r_container is not None:
+                        hh_r = np.add(hh_r, hh_r_container)
+                        
+    if not generator_options.not_parallel:
+        for temp_hh, temp_hh_f, temp_hh_r, temp_xedges, temp_yedges, temp_xedges_f, temp_yedges_f, temp_xedges_r, temp_yedges_r, temp_name, temp_dim in zip(hh, hh_f, hh_r, xedges, yedges, xedges_f, yedges_f, xedges_r, yedges_r, name, dim):
+            generator_options.diagnosticImage_parallel(temp_hh, temp_hh_f, temp_hh_r, temp_xedges, temp_yedges, temp_xedges_f, temp_yedges_f, temp_xedges_r, temp_yedges_r, temp_name)
 
     Xf = np.array(Xf)
     Vf = np.array(Vf)

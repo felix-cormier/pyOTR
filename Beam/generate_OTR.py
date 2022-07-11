@@ -46,8 +46,9 @@ def SimulateBeam(X, V, system, generator_options, isGenerator):
                         hh_r = np.add(hh_r, hh_r_container)
                         
 
-    for temp_hh, temp_hh_f, temp_hh_r, temp_xedges, temp_yedges, temp_xedges_f, temp_yedges_f, temp_xedges_r, temp_yedges_r, temp_name, temp_dim in zip(hh, hh_f, hh_r, xedges, yedges, xedges_f, yedges_f, xedges_r, yedges_r, name, dim):
-        generator_options.diagnosticImage_parallel(temp_hh, temp_hh_f, temp_hh_r, temp_xedges, temp_yedges, temp_xedges_f, temp_yedges_f, temp_xedges_r, temp_yedges_r, temp_name)
+    if not generator_options.not_parallel:
+        for temp_hh, temp_hh_f, temp_hh_r, temp_xedges, temp_yedges, temp_xedges_f, temp_yedges_f, temp_xedges_r, temp_yedges_r, temp_name, temp_dim in zip(hh, hh_f, hh_r, xedges, yedges, xedges_f, yedges_f, xedges_r, yedges_r, name, dim):
+            generator_options.diagnosticImage_parallel(temp_hh, temp_hh_f, temp_hh_r, temp_xedges, temp_yedges, temp_xedges_f, temp_yedges_f, temp_xedges_r, temp_yedges_r, temp_name)
 
     Xf = np.array(Xf)
     Vf = np.array(Vf)
@@ -58,9 +59,9 @@ def SimulateBeam(X, V, system, generator_options, isGenerator):
 def generate_OTR():
 
     generator_options = generatorConfig()
-    generator_options.output_path = '/scratch/fcormier/t2k/otr/output/test_jul7_parallel'
-    generator_options.nrays = 1000
-    generator_options.chunck = 500
+    generator_options.output_path = '/scratch/fcormier/t2k/otr/output/test_jul11_2'
+    generator_options.nrays = 5000
+    generator_options.chunck = 2500
     generator_options.not_parallel=False
     generator_options.GetTime()
     # Get details about the beam:

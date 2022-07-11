@@ -271,6 +271,7 @@ class generatorConfig():
         xedges_r = None
         yedges_r = None
 
+
         if len(X.shape) > 1 and X.shape[1] > 0:
             if parallel:
                 hh, xedges, yedges = generic_2D_plot(X[:,dim_0], X[:,dim_1], [ x_min_X, x_max_X], num_bins, "Transmitted X", [y_min_X, y_max_X], num_bins, 
@@ -296,15 +297,27 @@ class generatorConfig():
         if parallel:
             if hh is None:
                 hh = np.zeros([num_bins, num_bins])
+                print(f'{name}, init')
             if hh_f is None:
                 hh_f = np.zeros([num_bins, num_bins])
                 xedges_f = xedges
                 yedges_f = yedges
+                print(f'{name}, f')
             if hh_r is None:
                 hh_r = np.zeros([num_bins, num_bins])
                 xedges_r = xedges
                 yedges_r = yedges
+                print(f'{name}, r')
+
             return hh, xedges, yedges, hh_f, xedges_f, yedges_f, hh_r, xedges_r, yedges_r
+        if "Mirror" in name:
+            print(f'hh min {np.amin(hh)}, max {np.amax(hh)}')
+            print(f'hh X {np.amin(X[:,0])}, max {np.amax(X[:,0])}')
+            print(f'hh X {np.amin(X[:,dim_0])}, max {np.amax(X[:,dim_0])}')
+            print(f'hh X {np.amin(X[:,dim_1])}, max {np.amax(X[:,dim_1])}')
+            print(dim_0)
+            print(dim_1)
+            print(dim)
 
     def GetTime(self, start=True):
         now = datetime.datetime.now()
