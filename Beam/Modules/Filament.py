@@ -11,7 +11,7 @@ class Filament(LightSource):
         self.settings = generator_options
         self.nrays = self.settings.nrays
         self.conversion = factor
-        self.rad = 35.0/2
+        self.rad = 55.0/2
 
         self.sep = 40.0
         self.l_wire = 10.5*self.conversion
@@ -132,7 +132,7 @@ class Filament(LightSource):
     def GenerateRays(self):
         if(self.settings.filament['F1']):
             X,V = self.GenerateFilament(shift=np.array([0.,self.sep/2, -self.sep/2]))
-            self.settings.diagnosticImage(X,V, 'F1')
+            self.settings.diagnosticImage(X,V, 'F1', isGenerator = True)
             #X,V = self.GenerateFilament()
             self.settings.logger.info(f'F1:Added')
         if(self.settings.filament['F2']):
@@ -142,7 +142,7 @@ class Filament(LightSource):
                 #X,V = self.GenerateFilament(shift=np.array([0.,0., 0.]))
             else:
                 X2,V2 = self.GenerateFilament(shift=np.array([0.,self.sep/2, self.sep/2]))
-                self.settings.diagnosticImage(X2,V2, 'F2')
+                self.settings.diagnosticImage(X2,V2, 'F2', isGenerator = True)
                 X = np.concatenate((X,X2),axis=0)
                 V = np.concatenate((V,V2),axis=0)
         if(self.settings.filament['F3']):
@@ -151,7 +151,7 @@ class Filament(LightSource):
                 X,V = self.GenerateFilament(shift=np.array([0.,-self.sep/2, self.sep/2]))
             else:
                 X3,V3 = self.GenerateFilament(np.array([0.,-self.sep/2, self.sep/2]))
-                self.settings.diagnosticImage(X3,V3, 'F3')
+                self.settings.diagnosticImage(X3,V3, 'F3', isGenerator = True)
                 X = np.concatenate((X,X3),axis=0)
                 V = np.concatenate((V,V3),axis=0)
         return X,V

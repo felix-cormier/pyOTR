@@ -26,24 +26,37 @@ class Foil(OpticalComponent):
         y = y[GoodRays]
         Vy = Vy[GoodRays]
         X = X[GoodRays]
+        print("X diagnostics")
+        print(np.amin(X[:,0]))
+        print(np.amin(X[:,1]))
+        print(np.amin(X[:,2]))
         V = V[GoodRays]
         # Only keep rays that are pointing at the foil:
         ToPlane = Vy / np.abs(Vy) != (y - Y) / np.abs(y - Y)
         y = y[ToPlane]
         Vy = Vy[ToPlane]
         X = X[ToPlane]
+        print(np.amin(X[:,0]))
+        print(np.amin(X[:,1]))
+        print(np.amin(X[:,2]))
         V = V[ToPlane]
         # interaction at y = 0, by construction:
         t = (Y - y) / Vy
         #assert (t > 0).all()
         t.resize(t.shape[0], 1)
         Xint = X + V * t
+        print(np.amin(Xint[:,0]))
+        print(np.amin(Xint[:,1]))
+        print(np.amin(Xint[:,2]))
         assert (np.abs(Xint[:, 1] - Y) < eps).all()
         # Only keep rays that cross the Foil:
         passed = np.diag(Xint.dot(Xint.T)) < (self.diam**2) / 4.
         Xint = Xint[passed]
         V = V[passed]
         assert Xint.shape == V.shape
+        print(np.amin(Xint[:,0]))
+        print(np.amin(Xint[:,1]))
+        print(np.amin(Xint[:,2]))
         return Xint, V
 
     def PlaneReflect(self, V):
@@ -95,6 +108,39 @@ class CalibrationFoil(Foil):
             passed = np.logical_or(passed, mask)
         return passed
 
+    def diffraction(self, V):
+
+        print("DIFFRACTION")
+        print(f'ORIGINAL V: {V.shape}')
+        print(V)
+        print(np.amin(V[:,0]))
+        print(np.amin(V[:,1]))
+        print(np.amin(V[:,2]))
+        print(np.amax(V[:,0]))
+        print(np.amax(V[:,1]))
+        print(np.amax(V[:,2]))
+        print(V.dtype)
+
+        V_same = V
+
+        change_indices = V[:,0] > 0.99
+
+        mu, sigma = 0., 0.05
+        angles_x = np.random.normal(mu, sigma, V.shape[0])
+        angles_y = np.random.normal(mu, sigma, V.shape[0])
+
+        prop_z = np.sin(angles_x)
+        prop_y = np.sin(angles_y)
+        prop_x = 1 - np.sqrt( np.add( np.square(prop_z), np.square(prop_y)))
+
+        V_temp = np.concatenate((prop_x.reshape(prop_x.shape[0],1), prop_y.reshape(prop_y.shape[0],1), prop_z.reshape(prop_z.shape[0],1)), axis=1)
+        V[change_indices] = V_temp[change_indices]
+        print(f'NEW V: {V.shape}')
+        print(V)
+        print(V.dtype)
+
+        return V
+
     def RaysTransport(self, X, V):
         # Go to local coords:
         X = self.transform_coord.TransfrmPoint(X)
@@ -108,6 +154,7 @@ class CalibrationFoil(Foil):
         # Transform back to the global coords:
         Xint = self.transform_coord.TransfrmPoint(Xint, inv=True)
         Vr = self.transform_coord.TransfrmVec(Vr, inv=True)
+        #Vr = self.diffraction(Vr)
         return Xint, Vr
 
 # Metal Foil class, inherits from Generic Foil class:

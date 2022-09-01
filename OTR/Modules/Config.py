@@ -67,7 +67,10 @@ def options_for_propagation(generator_options):
     # 'H': 100_000.,
     # 'D': 100_000.,
         'rough': False,
-        'name': 'ParaMirror1'
+        'name': 'ParaMirror1',
+        'refl': 1,
+        'trans': 2,
+        'dir_comp': 1
     }
 
     generator_options.M2 = {
@@ -79,7 +82,10 @@ def options_for_propagation(generator_options):
     # 'H': 100_000.,
     # 'D': 100_000.,
         'rough': False,
-        'name': 'ParaMirror2'
+        'name': 'ParaMirror2',
+        'refl': -2,
+        'trans': -1,
+        'dir_comp': 0
     }
 
     generator_options.M3 = {
@@ -91,38 +97,52 @@ def options_for_propagation(generator_options):
     # 'H': 100_000.,
     # 'D': 100_000.,
         'rough': False,
-        'name': 'ParaMirror3'
+        'name': 'ParaMirror3',
+        'refl': -1,
+        'trans': 2,
+        'dir_comp': 1
     }
 
-    generator_options.M4 = {
+    M4 = {
         'X': np.array([[-1100., 6522., 0.]]),
         'angles': np.array([Conv(180.), 0., 0.]),
-        'f':300.,
+        'f': 300.,
         'H': 120.,
         'D': 120.,
     # 'H': 100_000.,
     # 'D': 100_000.,
         'rough': False,
-        'name': 'ParaMirror4'
+        'name': 'ParaMirror4',
+        'refl': -1,
+        'trans': 1,
+        'dir_comp': 0
     }
+
+    generator_options.M4 = M4
 
     generator_options.camera = {
         'npxlX': 484,
         'npxlY': 704,
-        'focal distance': 60.,
-        'R': 10_000.,
+        'focal distance': 300.,
+        'R': 11.,
+        'L': 7.9376,
+        'H': 12.672,
         'name': 'ImagePlane',
+        'refl': -3,
+        'trans': 3,
+        'X': np.array([[-1100. + 2*M4['f'], 6522., 0.]]),
+        'angles': np.array([Conv(90), Conv(90), -Conv(90)])
         
         #At foil
         #'X': np.array([[0., 0., 0.]]),
         #Angles for pointed at bg dist
-    #  'angles': np.array([Conv(90), Conv(90), Conv(90)]),
+        #  'angles': np.array([Conv(90), Conv(90), Conv(90)]),
         #Angles for pointed at beam
         #'angles': np.array([0., 0., 0.]),
         
         #At M1
-        'X': np.array([[1100., 0., 0.]]),
-        'angles': np.array([Conv(90), Conv(90), Conv(90)]),
+        #'X': np.array([[1100., 0., 0.]]),
+        #'angles': np.array([Conv(90), Conv(90), Conv(90)]),
         
         #For background
         #'X': np.array([[20., 0., 0.]]),#produced odd results
@@ -141,7 +161,5 @@ def options_for_propagation(generator_options):
         #'angles': np.array([0., Conv(90), 0.])
 
         #camera at M4 focal point
-        #'X': np.array([[-1100. + 2*M4['f'], 6522., 0.]]),
-        #'angles': np.array([Conv(90), Conv(90), 0.])
     }
 

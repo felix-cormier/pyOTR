@@ -14,8 +14,8 @@ def GetGeometry(generator_options):
     #foil = Foil.MetalFoil(generator_options, normal=generator_options.foil['normal'], diam=generator_options.foil['D'],
     #                            name=generator_options.foil['name'])
     
-    foil = Foil.DimpledFoil(generator_options, normal=generator_options.foil['normal'], diam=generator_options.foil['D'],eps=generator_options.foil['eps'],
-                                 name=generator_options.foil['name'])
+    #foil = Foil.DimpledFoil(generator_options, normal=generator_options.foil['normal'], diam=generator_options.foil['D'],eps=generator_options.foil['eps'],
+    #                            name=generator_options.foil['name'])
     
     #plane = Plane.PerfectPlane(
     #   normal=generator_options.plane['normal'], R=generator_options.plane['R'], name=generator_options.plane['name'])
@@ -29,8 +29,8 @@ def GetGeometry(generator_options):
     M2 = Mirror.ParaMirror(f=generator_options.M2['f'], H=generator_options.M2['H'], D=generator_options.M2['D'],
                            rough=generator_options.M2['rough'], name=generator_options.M2['name'])
 
-    #foil = Foil.CalibrationFoil(normal=generator_options.foil['normal'], diam=50., isGenerator=True,
-    #            hole_dist=7., hole_diam=1.2, name=generator_options.foil['name'], cross=generator_options.background['cfoil'])
+    foil = Foil.CalibrationFoil(normal=generator_options.foil['normal'], diam=50., isGenerator=True,
+                 hole_dist=7., hole_diam=1.2, name=generator_options.foil['name'], cross=generator_options.background['cfoil'])
     
   #  M0 = Mirror.PlaneMirror(
   #      normal=generator_options.M0['normal'], R=generator_options.M0['R'], name=generator_options.M0['name'])

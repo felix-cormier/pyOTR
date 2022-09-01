@@ -3,7 +3,7 @@ import OTR.include.CoordTrans as CoordTrans
 
 
 class OpticalComponent:
-    def __init__(self, isGenerator=False, name=None):
+    def __init__(self, isGenerator=False, name=None, generator_options=None):
         self.name = name
         self.isGenerator=isGenerator
 

@@ -1,12 +1,14 @@
 import numpy as np
 from OTR.include.OpticalComponent import OpticalComponent
+from Beam.Modules.Config import generatorConfig
 
 
 class ImagePlane(OpticalComponent):
-    def __init__(self, R=20., name='ImagePlane'):
-        OpticalComponent.__init__(self, name=name)
+    def __init__(self, R=20., name='ImagePlane', generator_options=None):
+        OpticalComponent.__init__(self, name=name, generator_options=None)
         self.name = 'ImagePlane'
         self.R = R
+        self.generator_options = generator_options
 
     def RaysTransport(self, X, V):
         # Go to local coords:
@@ -14,6 +16,7 @@ class ImagePlane(OpticalComponent):
         V = self.transform_coord.TransfrmVec(V)
         # Get the interaction points X and the V reflected:
         X, V = self.PlaneIntersect(X, V)
+        X = self.taper_to_camera(X)
         # Here we actually do not transform back to Global Coords, since it makes more sense to plot things
         # with respect to the Image Plane.
         #X = self.transform_coord.TransfrmPoint(X, inv=True)
@@ -51,3 +54,9 @@ class ImagePlane(OpticalComponent):
         V = V[keep]
         assert X.shape == V.shape
         return X, V
+
+    def taper_to_camera(self, X):
+        X = X*(1./2.2)
+        X[:,1] = -X[:,1]
+        #X = X*(-1.)
+        return X
