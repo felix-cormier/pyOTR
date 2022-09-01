@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def MakeHoles(fHdist=7., fHdmtr=1.2, save='data/calib_holes'):
+def MakeHoles(fHdist=7., fHdmtr=1.2, save='Beam/data/calib_holes'):
     holes = []
     # central holes:
     holes.append((2.8, 0.0, 2.8, 0.8))

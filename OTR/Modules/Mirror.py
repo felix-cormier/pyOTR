@@ -1,5 +1,5 @@
 import numpy as np
-from OpticalComponent import OpticalComponent
+from OTR.include.OpticalComponent import OpticalComponent
 
 
 class Mirror(OpticalComponent):
@@ -64,7 +64,7 @@ class PlaneMirror(Mirror):
         return X, V
 
 
-lass ParaMirror(Mirror):
+class ParaMirror(Mirror):
     def __init__(self, f=550., H=120., D=120., rough=False, name=None):
         Mirror.__init__(self, name=name)
         self.f = f  # focal length

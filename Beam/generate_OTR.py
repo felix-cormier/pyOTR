@@ -1,90 +1,139 @@
+from itertools import repeat
+
 import concurrent.futures
 import numpy as np
-import Config as cf
-import Beam
-import Laser
-import Filament
-import Geometry
+from Beam.Modules.Config import generatorConfig, Conv, Source
+import Beam.Modules.Beam as Beam
+import Beam.Modules.Laser as Laser
+import Beam.Modules.Laser_v2 as Laser_v2
+import Beam.Modules.Filament as Filament
+import Beam.Modules.Geometry as Geometry
 import time
-from PrepareData import PrepareData
+from OTR.include.PrepareData import PrepareData
 
-@cf.timer
-def SimulateBeam(X, V, system):
+def SimulateBeam(X, V, system, generator_options, isGenerator, extra_name = ''):
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        results = executor.map(system.TraceRays, X, V)
-        for i, result in enumerate(results):
-            if i % 100 == 0:
-                cf.logger.debug(f'Running data piece: {i}')
-            x, v = result
-            assert x.shape == v.shape
-            if i == 0:
-                Xf = np.array(x)
-                Vf = np.array(v)
-            else:
-                Xf = np.concatenate((Xf, x), axis=0)
-                Vf = np.concatenate((Vf, v), axis=0)
+        if generator_options.not_parallel:
+            Xf,Vf = system.TraceRays(X,V, generator_options, isGenerator)
+        else:
+            results = executor.map(system.TraceRays, X, V, repeat(generator_options), repeat(isGenerator))
+            for i, result in enumerate(results):
+                if i % 100 == 0:
+                    generator_options.logger.debug(f'Running data piece: {i}')
+                x, v, hh_container, xedges_container, yedges_container, hh_f_container, xedges_f_container, yedges_f_container, hh_r_container, xedges_r_container, yedges_r_container, name_container, dim_container = result
+                assert x.shape == v.shape
+                if i == 0:
+                    Xf = np.array(x)
+                    Vf = np.array(v)
+                    hh = np.array(hh_container)
+                    hh_f = np.array(hh_f_container)
+                    hh_r = np.array(hh_r_container)
+                    xedges = xedges_container
+                    yedges = yedges_container
+                    xedges_f = xedges_f_container
+                    yedges_f = yedges_f_container
+                    xedges_r = xedges_r_container
+                    yedges_r = yedges_r_container
+                    name = name_container
+                    dim = dim_container
+                else:
+                    Xf = np.concatenate((Xf, x), axis=0)
+                    Vf = np.concatenate((Vf, v), axis=0)
+                    if hh is not None and hh_container is not None:
+                        hh = np.add(hh, hh_container)
+                    if hh_f is not None and hh_f_container is not None:
+                        hh_f = np.add(hh_f, hh_f_container)
+                    if hh_r is not None and hh_r_container is not None:
+                        hh_r = np.add(hh_r, hh_r_container)
+                        
+
+    if not generator_options.not_parallel:
+        for temp_hh, temp_hh_f, temp_hh_r, temp_xedges, temp_yedges, temp_xedges_f, temp_yedges_f, temp_xedges_r, temp_yedges_r, temp_name, temp_dim in zip(hh, hh_f, hh_r, xedges, yedges, xedges_f, yedges_f, xedges_r, yedges_r, name, dim):
+            generator_options.diagnosticImage_parallel(temp_hh.T, temp_hh_f.T, temp_hh_r.T, temp_xedges, temp_yedges, temp_xedges_f, temp_yedges_f, temp_xedges_r, temp_yedges_r, temp_name, extra_name)
 
     Xf = np.array(Xf)
     Vf = np.array(Vf)
     return Xf, Vf
 
-if __name__ == '__main__':
 
-    cf.GetTime()
+
+def generate_OTR(generator_options=None, light=None, extra_name=None):
+
+    if generator_options is None:
+        generator_options = generatorConfig()
+        generator_options.output_path = '/scratch/fcormier/t2k/otr/output/test_aug22_laser_posTest_atCamera_2'
+        generator_options.nrays = 250000
+        generator_options.chunck = 5000
+        generator_options.source = Source.laser
+        generator_options.not_parallel=False
+        if generator_options.chunck == 0: 
+            generator_options.not_parallel=True
+    generator_options.GetTime()
     # Get details about the beam:
-    #beam = Beam.Beam()
-   # laser = Laser.Laser(rad=0.1, nrays=10_000)
-   # laser.Place(-1062.438, 855.654, 0., np.array([0.,0.,cf.Conv(51.066)]))
-    
-    filament = Filament.Filament(factor=0.5, nrays = 1_000_000)
-    filament.Place(-1062.438, 855.654, 0., np.array([0.,0.,cf.Conv(51.066)]))
-   # filament.Place(0., 0., 0., np.array([0.,0.,0.]))
-    
-    if(cf.source == 'protons'):
+    if light is None:
+        beam = Beam.Beam(generator_options)
+        laser = Laser.Laser(generator_options, rad=30, name='Laser')
+        #laser.Place(np.array([-1000, 0., 0.]), np.array([0.,0.,0.]))
+        laser.Place(-10., -2.8, 1.9799, np.array([0.,0.,0.]))
+        light=laser
+        
+        filament = Filament.Filament( generator_options, factor=0.5)
+        filament.Place(-1062.438, 855.654, 0., np.array([0.,0.,Conv(51.066)]))
+        # filament.Place(0., 0., 0., np.array([0.,0.,0.]))
+        
+    if(generator_options.source.name == 'protons'):
         X, V = beam.GenerateBeam()
-    elif(cf.source == 'filament'):
+    elif(generator_options.source.name == 'filament'):
         start = time.time()
        # X, V = beam.GenerateFilamentBacklight_v1()
         X, V = beam.GenerateFilament()
         end = time.time()
         print(f"Filament backlight generation time: {end - start}")
-    elif(cf.source == 'filament_v2'):
+    elif(generator_options.source.name == 'filament_v2'):
         start = time.time()
         X,V = filament.GenerateRays()
+        generator_options.diagnosticImage(X,V, 'Generator')
         end = time.time()
-        print(f"Filament backlight generation time: {end - start}")
-    elif(cf.source == 'laser'):
+        print(f"Filament v2 backlight generation time: {end - start}")
+    elif(generator_options.source.name == 'laser'):
         start = time.time()
-        X, V = laser.GenerateRays()
+        X, V = light.GenerateRays()
+        generator_options.diagnosticImage(X,V, 'Generator')
+        print(X)
         end = time.time()
-        #print(f"Filament backlight generation time: {end - start}")
+        print(f"Laser generation time: {end - start}")
     else:
         print('Not a valid source')
     
     #Save initial distribution
-    if cf.save:
-        if(cf.source == 'protons'):
-            np.save(f'{cf.name}_protonsX', X)
-            np.save(f'{cf.name}_protonsV', V)
-        elif(cf.source == 'filament'):
-            np.save(f'{cf.name}_filamentX', X)
-            np.save(f'{cf.name}_filamentV', V)
+    if generator_options.save:
+        if(generator_options.source.name == 'protons'):
+            np.save(f'{generator_options.name}_protonsX', X)
+            np.save(f'{generator_options.name}_protonsV', V)
+        elif(generator_options.source == 'filament'):
+            np.save(f'{generator_options.name}_filamentX', X)
+            np.save(f'{generator_options.name}_filamentV', V)
 
-    if cf.chunck > 0:
-        X, V  = PrepareData(X, V, chunck=cf.chunck)
+    if generator_options.chunck > 0 and not generator_options.not_parallel:
+        X, V  = PrepareData(X, V, chunck=generator_options.chunck)
 
     # Get the Foil Geometry: 
-    system = Geometry.GetGeometry()
+    system = Geometry.GetGeometry(generator_options)
     # Run simulation:
-    X, V = SimulateBeam(X, V, system)
+    X, V = SimulateBeam(X, V, system, generator_options, isGenerator=True, extra_name = extra_name)
     print('end')
     print(X[:10])
     print(V[:10])
     print(X.shape)
-    if cf.save:
-        np.save(f'{cf.name}_X', X)
-        np.save(f'{cf.name}_V', V)
+    if generator_options.save:
+        np.save(f'{generator_options.name}_X', X)
+        np.save(f'{generator_options.name}_V', V)
+
+    generator_options.GetTime(start=False)
+
+    return X,V, generator_options
+
     
-    cf.GetTime(start=False)
 
-
+if __name__ == '__main__':
+    generate_OTR()

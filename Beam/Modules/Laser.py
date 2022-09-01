@@ -1,12 +1,12 @@
 import numpy as np
 from numpy import cos, sin, sqrt, pi, exp
-import Config as cf
-from LightSource import LightSource
+from Beam.Modules.Config import generatorConfig
+from OTR.include.LightSource import LightSource
 
 
 class Laser(LightSource):
-    def __init__(self, rad=1.0, nrays=1_000_000, name=None):
-        LightSource.__init__(self, nrays, name=name)
+    def __init__(self, generator_options, rad=1.0, nrays=1_000_000, name=None):
+        LightSource.__init__(self, generator_options, name=name)
         self.rad = rad
         self.xorient = False
         self.yorient = False

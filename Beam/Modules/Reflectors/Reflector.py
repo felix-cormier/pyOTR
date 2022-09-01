@@ -1,10 +1,10 @@
 import numpy as np
-from OpticalComponent import OpticalComponent
+from OTR.include.OpticalComponent import OpticalComponent
 
 
 class Reflector(OpticalComponent):
-    def __init__(self, name=None):
-        OpticalComponent.__init__(self, name=name)
+    def __init__(self, isGenerator=False, name=None):
+        OpticalComponent.__init__(self, isGenerator, name=name)
         self.diam = 50.
 
     def PlaneTransport(self, X, V):
@@ -13,8 +13,8 @@ class Reflector(OpticalComponent):
 
 
 class PerfectReflector(Reflector):
-    def __init__(self, normal=np.array([[1, 0., 0.]]), R=20., name='PerfectReflector'):
-        Reflector.__init__(self, name=name)
+    def __init__(self, isGenerator=False, normal=np.array([[1, 0., 0.]]), R=20., name='PerfectReflector'):
+        Reflector.__init__(self, isGenerator, name=name)
         self.normal = normal
         self.R = R
 

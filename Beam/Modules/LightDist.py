@@ -5,7 +5,7 @@ from numpy.random import rand
 from scipy.stats import moyal
 from random import random
 from pynverse import inversefunc
-import Config as cf
+from Beam.Modules.Config import generatorConfig
 
 def Conv(deg):
     return (np.pi * deg) / 180.
@@ -83,9 +83,10 @@ def Landau(mu, sigma):
 
 
 class LightDist():
-    def __init__(self, seed=0):
-        self.beam_gamma = cf.beam['gamma']
-        self.theta_range = cf.foil['tht_range']  # rad
+    def __init__(self, generator_options, seed=0):
+        self.settings = generator_options
+        self.beam_gamma = self.settings.beam['gamma']
+        self.theta_range = self.settings.foil['tht_range']  # rad
         self.f_thtMax = self.OTRcdf(self.theta_range) # cdf is monotonically increasing
 
     def OTRcdf(self, theta):
