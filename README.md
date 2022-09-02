@@ -58,9 +58,11 @@ where these directions are defined from [this image of the typical OTR arrangeme
 
 ### Light propagation
 
-Once light has been generated, X (positions), V (direction) and general settings are passed to _pyOTR_ in _OTR/pyOTR.py_. This propagates the photons through the rest of the optical system, as defined in _OTR/Geometry.py_. Settings for the additional components, defined in _OTR/Modules/Config.py_ are added to the _generator_options_ class object through the _options_for_propagation_ function (called in _pyOTR). This ensures your changes to _OTR/Modules/Config.py_ are included in the _generator_options_ being used in the code. Typically, propagation will end in an image file. 
+Once light has been generated, X (positions), V (direction) and general settings are passed to _pyOTR_ in _OTR/pyOTR.py_. This propagates the photons through the rest of the optical system, as defined in _OTR/Geometry.py_. Settings for the additional components, defined in _OTR/Modules/Config.py_ are added to the _generator_options_ class object through the _options_for_propagation_ function (called in _pyOTR). This ensures your changes to _OTR/Modules/Config.py_ are included in the _generator_options_ being used in the code. Typically, propagation will end in an image file. The imagePlane class stays in local coordinates after passing through it, as it is typically the last component. 
 
+### Diagnostic images
 
+In the _generatorConfig_ class there is a _diagnosticImage_ function which is called for every component. This will make images of the photons at every component. This should work with both parallel and not parallel photon generation. It will save them in the _output\_path_ folder. They should also be separated into transmitted and reflected photons for each surface, but this doesn't quite work. Coordinates have been hard-coded, but not all are correct. If you add a new component, you will have to add some definitions, see _Config.py_ for examples.
 
 
 
