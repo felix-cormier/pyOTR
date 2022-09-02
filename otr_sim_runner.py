@@ -17,7 +17,7 @@ parser.add_argument("--doGeneration", help="generate photons", action="store_tru
 parser.add_argument("--doPropagation", help="propagate photons to camera", action="store_true")
 parser.add_argument("--doHoleFinding", help="find bright spots in file", action="store_true")
 parser.add_argument("--doOnAxis", help="find bright spots in file", action="store_true")
-parser.add_argument("--doOnAxisComparison", help="find bright spots in file", action="store_true")
+parser.add_argument("--doOnAxisComparison", help="Compares data and simulated on-axis measurements", action="store_true")
 parser.add_argument("--holeDirectory", help="directory over in doHoleFinding")
 args = parser.parse_args()
 
