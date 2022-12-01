@@ -17,11 +17,13 @@ class Filament(LightSource):
         self.l_wire = 10.5*self.conversion
         self.wire = False #true = on
         self.reflector = True #true = on
+        '''
         if(self.reflector):
             if self.settings.filament['Vtype'] == 'parallel':
                 self.settings.logger.info(f'Selected filament light source with parallel rays')
             elif self.settings.filament['Vtype'] == 'divergent':
                 self.settings.logger.info(f'Selected filament light source light source with div=' + str(self.settings.filament['spread']))
+        '''
 
     def GenerateWireRaysV(self,shape):
         V = np.zeros(shape)
@@ -134,9 +136,9 @@ class Filament(LightSource):
             X,V = self.GenerateFilament(shift=np.array([0.,self.sep/2, -self.sep/2]))
             self.settings.diagnosticImage(X,V, 'F1', isGenerator = True)
             #X,V = self.GenerateFilament()
-            self.settings.logger.info(f'F1:Added')
+            #self.settings.logger.info(f'F1:Added')
         if(self.settings.filament['F2']):
-            self.settings.logger.info(f'F2:Added')
+            #self.settings.logger.info(f'F2:Added')
             if(self.settings.filament['F1'] == False):
                 X,V = self.GenerateFilament(shift=np.array([0.,self.sep/2, self.sep/2]))
                 #X,V = self.GenerateFilament(shift=np.array([0.,0., 0.]))
@@ -146,7 +148,7 @@ class Filament(LightSource):
                 X = np.concatenate((X,X2),axis=0)
                 V = np.concatenate((V,V2),axis=0)
         if(self.settings.filament['F3']):
-            self.settings.logger.info(f'F3:Added')
+            #self.settings.logger.info(f'F3:Added')
             if(self.settings.filament['F1'] == False and self.settings.filament['F2'] == False):
                 X,V = self.GenerateFilament(shift=np.array([0.,-self.sep/2, self.sep/2]))
             else:

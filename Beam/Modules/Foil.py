@@ -54,9 +54,9 @@ class Foil(OpticalComponent):
         Xint = Xint[passed]
         V = V[passed]
         assert Xint.shape == V.shape
-        print(np.amin(Xint[:,0]))
-        print(np.amin(Xint[:,1]))
-        print(np.amin(Xint[:,2]))
+        #print(np.amin(Xint[:,0]))
+        #print(np.amin(Xint[:,1]))
+        #print(np.amin(Xint[:,2]))
         return Xint, V
 
     def PlaneReflect(self, V):
