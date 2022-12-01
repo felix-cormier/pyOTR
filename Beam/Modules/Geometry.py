@@ -54,6 +54,6 @@ def GetGeometry(generator_options):
 
     system = OpticalSystem.OpticalSystem()
     #system.AddComponent(plane)
-    #system.AddComponent(reflector)
+    system.AddComponent(reflector)
     system.AddComponent(foil)
     return system

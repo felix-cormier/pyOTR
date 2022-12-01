@@ -30,7 +30,7 @@ class Beam():
         sys.exit()
 
     def GenerateBeam(self):
-        self.settings.logger.info(f'Selected Proton Beam')
+        #self.settings.logger.info(f'Selected Proton Beam')
         mean = [self.x, self.y, self.z]
         X = np.random.multivariate_normal(mean, self.cov, self.nrays)
         V = self.GenerateRaysV(X.shape)
